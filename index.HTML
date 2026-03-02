@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HARVEST KING - Gacha Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Dark Theme - Black & Silver */
+            --bg-primary: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            --bg-secondary: linear-gradient(135deg, #141414 0%, #1f1f1f 100%);
+            --bg-tertiary: linear-gradient(135deg, #1f1f1f 0%, #2a2a2a 100%);
+            --bg-card: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            --text-primary: #e8e8e8;
+            --text-secondary: #a8a8a8;
+            --text-dim: #787878;
+            --accent-primary: linear-gradient(135deg, #b8b8b8 0%, #d4d4d4 100%);
+            --accent-secondary: linear-gradient(135deg, #949494 0%, #b0b0b0 100%);
+            --accent-dark: #787878;
+            --accent-light: #e8e8e8;
+            --border: #2a2a2a;
+            --border-accent: #4a4a4a;
+            --common-color: #5a6c7d;
+            --uncommon-color: #16a34a;
+            --rare-color: #3b82f6;
+            --epic-color: #a855f7;
+            --legendary-color: #fbbf24;
+            --mythical-color: #ef4444;
+        }
+
+        body.light-theme {
+            /* Light Theme - Silver & Gold */
+            --bg-primary: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%);
+            --bg-secondary: linear-gradient(135deg, #f0f0f0 0%, #fafafa 100%);
+            --bg-tertiary: linear-gradient(135deg, #d4d4d4 0%, #e0e0e0 100%);
+            --bg-card: linear-gradient(135deg, #ebebeb 0%, #f8f8f8 100%);
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a4a4a;
+            --text-dim: #787878;
+            --accent-primary: linear-gradient(135deg, #d4a574 0%, #f4c790 100%);
+            --accent-secondary: linear-gradient(135deg, #b8935e 0%, #d4af7a 100%);
+            --accent-dark: #8b7355;
+            --accent-light: #f4d5a6;
+            --border: #c0c0c0;
+            --border-accent: #a08060;
+            --common-color: #64748b;
+            --uncommon-color: #22c55e;
+            --rare-color: #60a5fa;
+            --epic-color: #c084fc;
+            --legendary-color: #fcd34d;
+            --mythical-color: #f87171;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid;
+            border-image: var(--accent-primary) 1;
+            padding-bottom: 8px;
+            flex: 1;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-accent);
+            border-radius: 20px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 10px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-primary);
+            color: #0a0a0a;
+            border-color: var(--border-accent);
+        }
+
+        .keyboard-hint {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-accent);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 9px;
+            color: var(--text-dim);
+            display: flex;
+            gap: 12px;
+        }
+
+        .kbd {
+            background: var(--bg-card);
+            border: 1px solid var(--border-accent);
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Consolas', monospace;
+        }
+
+        /* Main Section Separators */
+        .main-section {
+            margin-bottom: 48px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .main-section {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid;
+            border-image: var(--accent-primary) 1;
+        }
+
+        .main-section-title {
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            background: var(--accent-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 16px 0 8px 0;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 3px solid var(--accent-dark);
+            padding-left: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            color: var(--text-secondary);
+            margin: 12px 0 6px 0;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .section {
+            background: var(--bg-card);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+            font-size: 12px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            border: 1px dashed var(--border);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-accent);
+            border-radius: 6px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            display: none;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-message {
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Pack Selection */
+        .rarity-section {
+            margin-bottom: 8px;
+        }
+
+        .rarity-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .rarity-label {
+            font-weight: 600;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--accent-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .select-all-label {
+            font-size: 9px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .select-all-checkbox {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            accent-color: var(--accent-dark);
+        }
+
+        .pack-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .pack-button {
+            padding: 4px 8px;
+            border: 2px solid var(--border);
+            background: var(--bg-secondary);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-family: 'Consolas', monospace;
+        }
+
+        .pack-button:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-accent);
+            color: var(--text-primary);
+        }
+
+        .pack-button.selected {
+            border: 3px solid var(--border-accent);
+            font-weight: 700;
+            background: var(--accent-secondary);
+        }
+
+        /* Rarity Colors */
+        .common { background: var(--common-color); color: #ffffff; }
+        .uncommon { background: var(--uncommon-color); color: #ffffff; }
+        .rare { background: var(--rare-color); color: #ffffff; }
+        .epic { background: var(--epic-color); color: #ffffff; }
+        .legendary { background: var(--legendary-color); color: #1a1a1a; }
+        .mythical { background: linear-gradient(135deg, var(--mythical-color), #dc2626); color: #ffffff; }
+
+        /* Simulation Controls */
+        .simulation-packs {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .simulation-pack-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .simulation-pack-label {
+            font-weight: 700;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .simulation-pack-input {
+            padding: 4px 8px;
+            border: 1px solid var(--border-accent);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            width: 80px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .simulation-pack-input:focus {
+            outline: none;
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 2px rgba(180, 180, 180, 0.1);
+        }
+
+        .cumulative-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .cumulative-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .cumulative-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent-dark);
+        }
+
+        .btn {
+            padding: 6px 16px;
+            background: var(--accent-primary);
+            color: #0a0a0a;
+            border: none;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .btn:hover {
+            background: var(--accent-secondary);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-accent);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: #ffffff;
+            border: none;
+        }
+
+        .btn-reset:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+            border-color: #dc2626;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Pack Comparison */
+        .comparison-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .comparison-selectors {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .pack-selector {
+            position: relative;
+        }
+
+        .pack-selector-btn {
+            padding: 6px 12px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 150px;
+            text-align: center;
+            font-family: 'Consolas', monospace;
+            transition: all 0.2s ease;
+        }
+
+        .pack-selector-btn:hover {
+            border-color: var(--border-accent);
+        }
+
+        .pack-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--bg-card);
+            border: 2px solid var(--border-accent);
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 100;
+            margin-top: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 150px;
+        }
+
+        .pack-dropdown.active {
+            display: block;
+        }
+
+        .pack-dropdown-rarity-group {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pack-dropdown-rarity-label {
+            background: var(--bg-tertiary);
+            padding: 4px 8px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--accent-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+        }
+
+        .pack-dropdown-item {
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+            text-align: center;
+        }
+
+        .pack-dropdown-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .pack-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .pack-control-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-family: 'Consolas', monospace;
+        }
+
+        .pack-control-btn:hover {
+            background: var(--accent-primary);
+            color: #0a0a0a;
+            border-color: var(--border-accent);
+            transform: scale(1.1);
+        }
+
+        .pack-control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .comparison-charts {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .comparison-pie-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            min-width: 200px;
+        }
+
+        .comparison-pie-title {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding: 4px 12px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .pie-chart {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 12px;
+            font-size: 9px;
+        }
+
+        .pie-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pie-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .pie-legend-text {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Modal/Popup */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 2px solid var(--border-accent);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border-accent);
+            padding-bottom: 8px;
+        }
+
+        .modal-title {
+            font-size: 14px;
+            font-weight: 700;
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .config-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .config-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .config-name {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px;
+            cursor: pointer;
+            font-family: 'Consolas', monospace;
+        }
+
+        .config-name:focus {
+            outline: 1px solid var(--border-accent);
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+        }
+
+        .config-item-btn {
+            padding: 4px 8px;
+            font-size: 9px;
+            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-radius: 2px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .config-item-btn:hover {
+            background: var(--accent-primary);
+            color: #0a0a0a;
+            border-color: var(--border-accent);
+        }
+
+        .config-item-btn.delete:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #ffffff;
+        }
+
+        .confirm-modal {
+            max-width: 300px;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        /* Pack Details */
+        .pack-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .pack-card {
+            background: var(--bg-card);
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .pack-header {
+            padding: 6px 8px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 11px;
+            text-align: center;
+            border-left: 3px solid var(--border-accent);
+        }
+
+        .pack-header.common { background: var(--common-color); color: #ffffff; }
+        .pack-header.uncommon { background: var(--uncommon-color); color: #ffffff; }
+        .pack-header.rare { background: var(--rare-color); color: #ffffff; }
+        .pack-header.epic { background: var(--epic-color); color: #ffffff; }
+        .pack-header.legendary { background: var(--legendary-color); color: #1a1a1a; }
+        .pack-header.mythical { background: linear-gradient(135deg, var(--mythical-color), #dc2626); color: #ffffff; }
+
+        .pack-section {
+            margin-bottom: 12px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            border-left: 4px solid var(--border);
+        }
+
+        .pack-section.common-section { border-left-color: var(--common-color); }
+        .pack-section.uncommon-section { border-left-color: var(--uncommon-color); }
+        .pack-section.rare-section { border-left-color: var(--rare-color); }
+        .pack-section.epic-section { border-left-color: var(--epic-color); }
+        .pack-section.legendary-section { border-left-color: var(--legendary-color); }
+        .pack-section.tokens-section { border-left-color: var(--accent-dark); }
+
+        .pack-section-title {
+            font-size: 9px;
+            font-weight: 700;
+            background: var(--accent-secondary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .editable-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9px;
+        }
+
+        .editable-table th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 4px 6px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 8px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-accent);
+            white-space: nowrap;
+        }
+
+        .editable-table td {
+            padding: 3px 4px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .editable-table td:first-child {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 8px;
+            text-align: left;
+            padding-left: 6px;
+        }
+
+        .editable-table tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        .editable-table input {
+            width: 100%;
+            padding: 2px 4px;
+            border: 1px solid var(--border-accent);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-radius: 2px;
+            font-weight: 600;
+            font-size: 9px;
+            font-family: 'Consolas', monospace;
+            text-align: center;
+        }
+
+        .editable-table input:focus {
+            outline: none;
+            border-color: var(--accent-dark);
+            background: var(--bg-tertiary);
+        }
+
+        /* Mobile Mockup */
+        .phone-frame {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 8px;
+            border: 2px solid var(--border);
+            max-width: 280px;
+        }
+
+        .phone-screen {
+            background: linear-gradient(135deg, #2d3139 0%, #1e2229 100%);
+            border-radius: 16px;
+            padding: 12px;
+            border: 1px solid var(--border-accent);
+        }
+
+        .screen-title {
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .reward-card {
+            background: var(--bg-tertiary);
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
+            padding: 6px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .reward-type {
+            font-size: 8px;
+            font-weight: 600;
+            margin-bottom: 3px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .reward-count {
+            font-size: 16px;
+            font-weight: 700;
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .token-display {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-around;
+            border: 1px solid var(--border-accent);
+        }
+
+        .token-item {
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .token-label {
+            font-size: 8px;
+            margin-bottom: 2px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .token-value {
+            font-size: 14px;
+            font-weight: 700;
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 160px;
+            gap: 6px;
+            padding: 16px 8px 8px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            margin-top: 6px;
+            position: relative;
+        }
+
+        .bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            position: relative;
+            max-width: 60px;
+        }
+
+        .bar-fill {
+            width: 100%;
+            border-radius: 2px 2px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .bar-fill.common-bar {
+            background: linear-gradient(to top, #4a5568, var(--common-color));
+        }
+
+        .bar-fill.uncommon-bar {
+            background: linear-gradient(to top, #15803d, var(--uncommon-color));
+        }
+
+        .bar-fill.rare-bar {
+            background: linear-gradient(to top, #2563eb, var(--rare-color));
+        }
+
+        .bar-fill.epic-bar {
+            background: linear-gradient(to top, #9333ea, var(--epic-color));
+        }
+
+        .bar-fill.legendary-bar {
+            background: linear-gradient(to top, #f59e0b, var(--legendary-color));
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            font-size: 10px;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .legendary-bar .bar-value {
+            color: var(--legendary-color);
+        }
+
+        .bar-label {
+            margin-top: 4px;
+            font-weight: 600;
+            font-size: 8px;
+            text-align: center;
+            padding: 2px 4px;
+            border-radius: 2px;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        /* Dual Column Bar */
+        .dual-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            position: relative;
+            max-width: 100px;
+        }
+
+        .dual-bar-container {
+            display: flex;
+            width: 100%;
+            gap: 2px;
+            align-items: flex-end;
+            height: 120px;
+        }
+
+        .dual-bar-column {
+            flex: 1;
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dual-bar-value {
+            position: absolute;
+            top: -18px;
+            font-weight: 700;
+            font-size: 8px;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        /* Statistics Summary */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid var(--border-accent);
+        }
+
+        .stat-card.seed-token {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            border-left-color: #6d28d9;
+        }
+
+        .stat-card.tool-token {
+            background: linear-gradient(135deg, #0891b2, #06b6d4);
+            border-left-color: #0e7490;
+        }
+
+        .stat-card.total-cards {
+            background: linear-gradient(135deg, #3f3f46, #52525b);
+            border-left-color: #27272a;
+        }
+
+        .stat-card.pack-count {
+            background: linear-gradient(135deg, #52525b, #71717a);
+            border-left-color: #3f3f46;
+        }
+
+        .stat-card.seed-token .stat-card-title,
+        .stat-card.tool-token .stat-card-title,
+        .stat-card.total-cards .stat-card-title,
+        .stat-card.pack-count .stat-card-title {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.seed-token .stat-card-value,
+        .stat-card.tool-token .stat-card-value,
+        .stat-card.total-cards .stat-card-value,
+        .stat-card.pack-count .stat-card-value {
+            color: #ffffff;
+        }
+
+        .stat-card-title {
+            font-size: 9px;
+            color: var(--text-dim);
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .stat-card-value {
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* MAX OUT Section */
+        .maxout-container {
+            margin-top: 20px;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            border: 2px solid var(--border-accent);
+        }
+
+        .maxout-header {
+            background: var(--accent-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .maxout-progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .progress-card {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 4px solid var(--border-accent);
+        }
+
+        .progress-card.common { border-left-color: var(--common-color); }
+        .progress-card.uncommon { border-left-color: var(--uncommon-color); }
+        .progress-card.rare { border-left-color: var(--rare-color); }
+        .progress-card.epic { border-left-color: var(--epic-color); }
+        .progress-card.legendary { border-left-color: var(--legendary-color); }
+
+        .progress-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .progress-bar-container {
+            background: var(--bg-tertiary);
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .progress-detail {
+            font-size: 8px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .progress-label {
+            font-size: 9px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-top: 4px;
+            margin-bottom: 2px;
+        }
+
+        .hero-item {
+            background: var(--bg-tertiary);
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--border-accent);
+        }
+
+        .hero-item.common { border-left-color: var(--common-color); }
+        .hero-item.uncommon { border-left-color: var(--uncommon-color); }
+        .hero-item.rare { border-left-color: var(--rare-color); }
+        .hero-item.epic { border-left-color: var(--epic-color); }
+        .hero-item.legendary { border-left-color: var(--legendary-color); }
+
+        .hero-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .hero-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .hero-level {
+            font-size: 9px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-dark);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
+
+        /* Results Layout */
+        .results-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 1200px) {
+            .results-layout {
+                grid-template-columns: 1fr;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .keyboard-hint {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
+    
+    <div class="keyboard-hint">
+        <span><span class="kbd">R</span> Run Simulation</span>
+        <span><span class="kbd">C</span> Compare</span>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <div class="toast-icon">⚠️</div>
+            <div class="toast-message" id="toast-message"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="header-container">
+            <h1>HARVEST KING | GACHA SIMULATOR</h1>
+        </div>
+
+        <!-- ========== SECTION 1: PACK SIMULATOR ========== -->
+        <div class="main-section">
+            <div class="main-section-header">
+                <div class="main-section-title">Pack Simulator</div>
+            </div>
+
+            <!-- Pack Selection -->
+            <div class="section">
+                <h2>Pack Selection</h2>
+                
+                <div class="rarity-section">
+                    <div class="rarity-header">
+                        <div class="rarity-label">COMMON</div>
+                        <div class="select-all-container">
+                            <span class="select-all-label">Select All</span>
+                            <input type="checkbox" class="select-all-checkbox" onchange="toggleAllPacks('common', this.checked)">
+                        </div>
+                    </div>
+                    <div class="pack-buttons" id="common-packs"></div>
+                </div>
+
+                <div class="rarity-section">
+                    <div class="rarity-header">
+                        <div class="rarity-label">UNCOMMON</div>
+                        <div class="select-all-container">
+                            <span class="select-all-label">Select All</span>
+                            <input type="checkbox" class="select-all-checkbox" onchange="toggleAllPacks('uncommon', this.checked)">
+                        </div>
+                    </div>
+                    <div class="pack-buttons" id="uncommon-packs"></div>
+                </div>
+
+                <div class="rarity-section">
+                    <div class="rarity-header">
+                        <div class="rarity-label">RARE</div>
+                        <div class="select-all-container">
+                            <span class="select-all-label">Select All</span>
+                            <input type="checkbox" class="select-all-checkbox" onchange="toggleAllPacks('rare', this.checked)">
+                        </div>
+                    </div>
+                    <div class="pack-buttons" id="rare-packs"></div>
+                </div>
+
+                <div class="rarity-section">
+                    <div class="rarity-header">
+                        <div class="rarity-label">EPIC</div>
+                        <div class="select-all-container">
+                            <span class="select-all-label">Select All</span>
+                            <input type="checkbox" class="select-all-checkbox" onchange="toggleAllPacks('epic', this.checked)">
+                        </div>
+                    </div>
+                    <div class="pack-buttons" id="epic-packs"></div>
+                </div>
+
+                <div class="rarity-section">
+                    <div class="rarity-header">
+                        <div class="rarity-label">LEGENDARY</div>
+                        <div class="select-all-container">
+                            <span class="select-all-label">Select All</span>
+                            <input type="checkbox" class="select-all-checkbox" onchange="toggleAllPacks('legendary', this.checked)">
+                        </div>
+                    </div>
+                    <div class="pack-buttons" id="legendary-packs"></div>
+                </div>
+
+                <div class="rarity-section">
+                    <div class="rarity-header">
+                        <div class="rarity-label">MYTHICAL</div>
+                        <div class="select-all-container">
+                            <span class="select-all-label">Select All</span>
+                            <input type="checkbox" class="select-all-checkbox" onchange="toggleAllPacks('mythical', this.checked)">
+                        </div>
+                    </div>
+                    <div class="pack-buttons" id="mythical-packs"></div>
+                </div>
+            </div>
+
+            <!-- Simulation Controls -->
+            <div class="section">
+                <h2>Simulation</h2>
+                <div id="simulation-packs-container" class="simulation-packs"></div>
+                <div class="btn-group">
+                    <button class="btn" onclick="runSimulation()">▶ Run</button>
+                    <div class="cumulative-container">
+                        <input type="checkbox" class="cumulative-checkbox" id="cumulative-checkbox">
+                        <label class="cumulative-label" for="cumulative-checkbox">Cumulative</label>
+                    </div>
+                    <button class="btn btn-secondary" onclick="showWorstCase()">Worst Case</button>
+                    <button class="btn btn-secondary" onclick="showBestCase()">Best Case</button>
+                    <button class="btn btn-reset" onclick="resetSimulation()">↻ Reset</button>
+                </div>
+            </div>
+
+            <!-- Results Container -->
+            <div id="results-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎲</div>
+                    <strong>Select packs and run simulation to see results</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 2: PACK COMPARISON ========== -->
+        <div class="main-section">
+            <div class="main-section-header">
+                <div class="main-section-title">Pack Comparison</div>
+            </div>
+            
+            <div class="comparison-controls">
+                <button class="btn" onclick="runComparison()">⚖ Compare</button>
+                <button class="btn btn-reset" onclick="resetComparison()">↻ Reset</button>
+            </div>
+            <div class="comparison-selectors" id="comparison-selectors"></div>
+            <div id="comparison-results">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <strong>Select packs and click Compare to see results</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 3: PACK CONFIGURATION ========== -->
+        <div class="main-section">
+            <div class="main-section-header">
+                <div class="main-section-title">Pack Configuration</div>
+                <button class="btn btn-secondary" onclick="openConfigModal()">💾 Saved Configs</button>
+            </div>
+            
+            <div class="pack-details" id="pack-configuration-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔧</div>
+                    <strong>Select packs to configure their properties</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 4: HERO AND SPRINKLERS CONFIGURATION ========== -->
+        <div class="main-section">
+            <div class="main-section-header">
+                <div class="main-section-title">Hero and Sprinklers Configuration</div>
+            </div>
+            
+            <div class="section">
+                <h2>Hero Configuration</h2>
+                <div class="pack-details">
+                    <div class="pack-card">
+                        <div class="pack-header">Hero Count by Rarity</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Rarity</th><th>Count</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Common</td><td><input type="number" value="3" onchange="heroConfig.count.common = parseInt(this.value)"></td></tr>
+                                <tr><td>Uncommon</td><td><input type="number" value="2" onchange="heroConfig.count.uncommon = parseInt(this.value)"></td></tr>
+                                <tr><td>Rare</td><td><input type="number" value="5" onchange="heroConfig.count.rare = parseInt(this.value)"></td></tr>
+                                <tr><td>Epic</td><td><input type="number" value="4" onchange="heroConfig.count.epic = parseInt(this.value)"></td></tr>
+                                <tr><td>Legendary</td><td><input type="number" value="2" onchange="heroConfig.count.legendary = parseInt(this.value)"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-card">
+                        <div class="pack-header">Hero Seed Cost (by Level)</div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="editable-table">
+                                <thead>
+                                    <tr><th>Lv</th><th style="color: var(--common-color);">Common</th><th style="color: var(--uncommon-color);">Uncommon</th><th style="color: var(--rare-color);">Rare</th><th style="color: var(--epic-color);">Epic</th><th style="color: var(--legendary-color);">Legendary</th></tr>
+                                </thead>
+                                <tbody id="hero-seed-cost-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="pack-card">
+                        <div class="pack-header">Hero Card Cost (by Level)</div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="editable-table">
+                                <thead>
+                                    <tr><th>Lv</th><th style="color: var(--common-color);">Common</th><th style="color: var(--uncommon-color);">Uncommon</th><th style="color: var(--rare-color);">Rare</th><th style="color: var(--epic-color);">Epic</th><th style="color: var(--legendary-color);">Legendary</th></tr>
+                                </thead>
+                                <tbody id="hero-card-cost-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Sprinkler Configuration</h2>
+                <div class="pack-details">
+                    <div class="pack-card">
+                        <div class="pack-header">Sprinkler Count by Rarity</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Rarity</th><th>Count</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Common</td><td><input type="number" value="2" onchange="sprinklerConfig.count.common = parseInt(this.value)"></td></tr>
+                                <tr><td>Uncommon</td><td><input type="number" value="1" onchange="sprinklerConfig.count.uncommon = parseInt(this.value)"></td></tr>
+                                <tr><td>Rare</td><td><input type="number" value="2" onchange="sprinklerConfig.count.rare = parseInt(this.value)"></td></tr>
+                                <tr><td>Epic</td><td><input type="number" value="1" onchange="sprinklerConfig.count.epic = parseInt(this.value)"></td></tr>
+                                <tr><td>Legendary</td><td><input type="number" value="1" onchange="sprinklerConfig.count.legendary = parseInt(this.value)"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-card">
+                        <div class="pack-header">Sprinkler Tool Cost (by Level)</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Lv</th><th style="color: var(--common-color);">Common</th><th style="color: var(--uncommon-color);">Uncommon</th><th style="color: var(--rare-color);">Rare</th><th style="color: var(--epic-color);">Epic</th><th style="color: var(--legendary-color);">Legendary</th></tr>
+                            </thead>
+                            <tbody id="sprinkler-tool-cost-table"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-card">
+                        <div class="pack-header">Sprinkler Card Cost (by Level)</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Lv</th><th style="color: var(--common-color);">Common</th><th style="color: var(--uncommon-color);">Uncommon</th><th style="color: var(--rare-color);">Rare</th><th style="color: var(--epic-color);">Epic</th><th style="color: var(--legendary-color);">Legendary</th></tr>
+                            </thead>
+                            <tbody id="sprinkler-card-cost-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Modal -->
+    <div id="config-modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Saved Configurations</div>
+                <button class="modal-close" onclick="closeConfigModal()">✕</button>
+            </div>
+            <button class="btn" style="width: 100%;" onclick="saveCurrentSetup()">💾 Save Current Setup</button>
+            <div class="config-list" id="config-list"></div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal confirm-modal">
+            <div class="modal-header">
+                <div class="modal-title">Confirm</div>
+                <button class="modal-close" onclick="closeConfirmModal()">✕</button>
+            </div>
+            <p id="confirm-message" style="margin: 16px 0; color: var(--text-secondary); font-size: 11px;"></p>
+            <div class="confirm-buttons">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn" id="confirm-yes-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PACK_ORDER = [
+            'TT_Common_1', 'TT_Common_2', 'TT_Uncommon_1', 'TT_Uncommon_2', 'TT_Uncommon_3', 'TT_Uncommon_4',
+            'TA_Common', 'TA1_Common', 'TA_Uncommon', 'TA_Rare',
+            'T0_Common', 'T0_Uncommon', 'T0_Rare', 'T0_Epic', 'T0_Legendary', 'T0_Mythical',
+            'T1_Common', 'T1_Uncommon', 'T1_Rare', 'T1_Epic',
+            'T2_Common', 'T2_Uncommon', 'T2_Rare', 'T2_Epic'
+        ];
+
+        const RARITY_COLORS = {
+            common: { light: '#5a6c7d', dark: '#4a5c6d' },
+            uncommon: { light: '#16a34a', dark: '#15803d' },
+            rare: { light: '#3b82f6', dark: '#2563eb' },
+            epic: { light: '#a855f7', dark: '#9333ea' },
+            legendary: { light: '#fbbf24', dark: '#f59e0b' }
+        };
+
+        const RARITIES = {
+            common: ['TT_Common_1', 'TT_Common_2', 'TA_Common', 'T0_Common', 'T1_Common', 'T2_Common'],
+            uncommon: ['TT_Uncommon_1', 'TT_Uncommon_2', 'TT_Uncommon_3', 'TT_Uncommon_4', 'TA1_Common', 'TA_Uncommon', 'T0_Uncommon', 'T1_Uncommon', 'T2_Uncommon'],
+            rare: ['TA_Rare', 'T0_Rare', 'T1_Rare', 'T2_Rare'],
+            epic: ['T0_Epic', 'T1_Epic', 'T2_Epic'],
+            legendary: ['T0_Legendary'],
+            mythical: ['T0_Mythical']
+        };
+
+        // Hero Configuration
+        const heroConfig = {
+            count: { common: 3, uncommon: 2, rare: 5, epic: 4, legendary: 2 },
+            maxLevel: 20,
+            seedCost: {
+                common:    [25, 50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000, 0],
+                uncommon:  [50, 100, 200, 500, 1000, 2000, 4000, 6000, 8000, 10000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 0],
+                rare:      [100, 200, 400, 1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 26000, 28000, 30000, 32000, 34000, 36000, 38000, 40000, 0],
+                epic:      [300, 600, 1200, 3000, 6000, 12000, 24000, 36000, 48000, 60000, 72000, 78000, 84000, 90000, 96000, 102000, 108000, 114000, 120000, 0],
+                legendary: [600, 1200, 2400, 6000, 12000, 24000, 48000, 72000, 96000, 120000, 144000, 156000, 168000, 180000, 192000, 204000, 216000, 228000, 240000, 0]
+            },
+            cardCost: {
+                common:    [0, 3, 6, 9, 18, 24, 36, 54, 63, 72, 81, 90, 96, 102, 108, 114, 120, 126, 132, 138],
+                uncommon:  [0, 3, 6, 9, 18, 24, 36, 54, 63, 72, 81, 90, 96, 102, 108, 114, 120, 126, 132, 138],
+                rare:      [0, 3, 6, 9, 18, 24, 36, 54, 63, 72, 81, 90, 96, 102, 108, 114, 120, 126, 132, 138],
+                epic:      [0, 3, 6, 9, 18, 24, 36, 54, 63, 72, 81, 90, 96, 102, 108, 114, 120, 126, 132, 138],
+                legendary: [0, 2, 4, 8, 16, 24, 36, 54, 63, 72, 81, 90, 96, 102, 108, 114, 120, 126, 132, 138]
+            }
+        };
+
+        // Sprinkler Configuration
+        const sprinklerConfig = {
+            count: { common: 2, uncommon: 1, rare: 2, epic: 1, legendary: 1 },
+            maxLevel: 10,
+            toolCost: {
+                common: [0, 5, 10, 20, 50, 100, 200, 500, 900, 1400],
+                uncommon: [0, 10, 20, 40, 100, 200, 400, 1000, 1800, 2800],
+                rare: [0, 20, 40, 80, 200, 400, 800, 2000, 3600, 5600],
+                epic: [0, 60, 120, 240, 600, 1200, 2400, 6000, 10800, 16800],
+                legendary: [0, 105, 210, 420, 1050, 2100, 4200, 10500, 18900, 29400]
+            },
+            cardCost: {
+                common: [0, 1, 2, 3, 5, 7, 10, 14, 19, 25],
+                uncommon: [0, 2, 3, 5, 8, 11, 16, 22, 30, 40],
+                rare: [0, 3, 5, 7, 11, 15, 21, 29, 40, 53],
+                epic: [0, 5, 6, 9, 14, 18, 24, 32, 44, 58],
+                legendary: [0, 4, 6, 8, 15, 18, 27, 33, 48, 56]
+            }
+        };
+
+        // Progress tracking with detailed leveling
+        let heroProgress = {
+            common: {unlocked: 0, heroes: []},
+            uncommon: {unlocked: 0, heroes: []},
+            rare: {unlocked: 0, heroes: []},
+            epic: {unlocked: 0, heroes: []},
+            legendary: {unlocked: 0, heroes: []}
+        };
+
+        let sprinklerProgress = {
+            common: {unlocked: 0, sprinklers: []},
+            uncommon: {unlocked: 0, sprinklers: []},
+            rare: {unlocked: 0, sprinklers: []},
+            epic: {unlocked: 0, sprinklers: []},
+            legendary: {unlocked: 0, sprinklers: []}
+        };
+
+        let availableSeeds = 0;
+        let availableTools = 0;
+
+        const packData = {
+            "TT_Common_1": { rarity: "common", seedToken: {min: 75, max: 75}, toolToken: {min: 0, max: 0}, commonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 3, max: 3, chance: 100, variety: 1}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TT_Common_2": { rarity: "common", seedToken: {min: 30, max: 50}, toolToken: {min: 2, max: 5}, commonHeroCard: {min: 2, max: 4, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 1, max: 1, chance: 100, variety: 1}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TA_Common": { rarity: "common", seedToken: {min: 30, max: 50}, toolToken: {min: 2, max: 5}, commonHeroCard: {min: 5, max: 7, chance: 100, variety: 2}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T0_Common": { rarity: "common", seedToken: {min: 20, max: 50}, toolToken: {min: 2, max: 5}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T1_Common": { rarity: "common", seedToken: {min: 30, max: 60}, toolToken: {min: 4, max: 8}, commonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T2_Common": { rarity: "common", seedToken: {min: 50, max: 100}, toolToken: {min: 6, max: 10}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TT_Uncommon_1": { rarity: "uncommon", seedToken: {min: 150, max: 150}, toolToken: {min: 5, max: 5}, commonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 1, max: 1, chance: 100, variety: 1}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 4, max: 4, chance: 100, variety: 1}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 2, max: 2, chance: 100, variety: 1}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TT_Uncommon_2": { rarity: "uncommon", seedToken: {min: 75, max: 150}, toolToken: {min: 3, max: 6}, commonHeroCard: {min: 2, max: 3, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 1, max: 2, chance: 100, variety: 1}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 2, max: 2, chance: 100, variety: 1}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TT_Uncommon_3": { rarity: "uncommon", seedToken: {min: 75, max: 150}, toolToken: {min: 3, max: 6}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 1, max: 2, chance: 20, variety: 1}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 100, variety: 1}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TT_Uncommon_4": { rarity: "uncommon", seedToken: {min: 100, max: 180}, toolToken: {min: 6, max: 10}, commonHeroCard: {min: 6, max: 10, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, commonSprinklerCard: {min: 1, max: 2, chance: 75, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 100, variety: 1}, uncommonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 1, max: 1, chance: 10, variety: 1}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TA1_Common": { rarity: "uncommon", seedToken: {min: 30, max: 70}, toolToken: {min: 4, max: 8}, commonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TA_Uncommon": { rarity: "uncommon", seedToken: {min: 50, max: 120}, toolToken: {min: 3, max: 6}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, commonHeroUnlock: {min: 1, max: 1, chance: 35, variety: 1}, commonSprinklerCard: {min: 1, max: 2, chance: 50, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 15, variety: 1}, uncommonHeroCard: {min: 2, max: 4, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 35, variety: 1}, uncommonSprinklerCard: {min: 1, max: 2, chance: 35, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 10, variety: 1}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T0_Uncommon": { rarity: "uncommon", seedToken: {min: 50, max: 100}, toolToken: {min: 3, max: 6}, commonHeroCard: {min: 2, max: 3, chance: 100, variety: 1}, commonHeroUnlock: {min: 1, max: 1, chance: 35, variety: 1}, commonSprinklerCard: {min: 1, max: 2, chance: 50, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 15, variety: 1}, uncommonHeroCard: {min: 2, max: 3, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, uncommonSprinklerCard: {min: 1, max: 2, chance: 50, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 15, variety: 1}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T1_Uncommon": { rarity: "uncommon", seedToken: {min: 80, max: 150}, toolToken: {min: 6, max: 10}, commonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, commonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, commonSprinklerCard: {min: 1, max: 2, chance: 75, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 20, variety: 1}, uncommonHeroCard: {min: 2, max: 3, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, uncommonSprinklerCard: {min: 1, max: 2, chance: 50, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 15, variety: 1}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 1, max: 1, chance: 10, variety: 1}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T2_Uncommon": { rarity: "uncommon", seedToken: {min: 120, max: 180}, toolToken: {min: 8, max: 12}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, commonHeroUnlock: {min: 1, max: 3, chance: 40, variety: 1}, commonSprinklerCard: {min: 1, max: 3, chance: 75, variety: 1}, commonSprinklerUnlock: {min: 1, max: 2, chance: 20, variety: 1}, uncommonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 2, chance: 40, variety: 1}, uncommonSprinklerCard: {min: 1, max: 3, chance: 50, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 2, chance: 10, variety: 1}, rareHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroUnlock: {min: 1, max: 2, chance: 10, variety: 1}, rareSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "TA_Rare": { rarity: "rare", seedToken: {min: 120, max: 200}, toolToken: {min: 12, max: 20}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, commonHeroUnlock: {min: 1, max: 1, chance: 30, variety: 1}, commonSprinklerCard: {min: 1, max: 3, chance: 95, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 10, variety: 1}, uncommonHeroCard: {min: 4, max: 6, chance: 100, variety: 2}, uncommonHeroUnlock: {min: 1, max: 1, chance: 30, variety: 1}, uncommonSprinklerCard: {min: 1, max: 2, chance: 75, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 7, variety: 1}, rareHeroCard: {min: 1, max: 2, chance: 80, variety: 1}, rareHeroUnlock: {min: 1, max: 1, chance: 15, variety: 1}, rareSprinklerCard: {min: 1, max: 1, chance: 50, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 5, variety: 1}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 1, max: 1, chance: 5, variety: 1}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T0_Rare": { rarity: "rare", seedToken: {min: 120, max: 200}, toolToken: {min: 12, max: 20}, commonHeroCard: {min: 5, max: 6, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 30, variety: 1}, commonSprinklerCard: {min: 3, max: 4, chance: 100, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 10, variety: 1}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 1, max: 1, chance: 30, variety: 1}, uncommonSprinklerCard: {min: 1, max: 2, chance: 75, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 7, variety: 1}, rareHeroCard: {min: 1, max: 2, chance: 80, variety: 1}, rareHeroUnlock: {min: 1, max: 1, chance: 10, variety: 1}, rareSprinklerCard: {min: 1, max: 1, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 5, variety: 1}, epicHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroUnlock: {min: 1, max: 1, chance: 5, variety: 1}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T1_Rare": { rarity: "rare", seedToken: {min: 180, max: 275}, toolToken: {min: 15, max: 25}, commonHeroCard: {min: 5, max: 6, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, commonSprinklerCard: {min: 2, max: 4, chance: 100, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 20, variety: 1}, uncommonHeroCard: {min: 3, max: 4, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, uncommonSprinklerCard: {min: 1, max: 2, chance: 100, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 15, variety: 1}, rareHeroCard: {min: 4, max: 6, chance: 80, variety: 1}, rareHeroUnlock: {min: 1, max: 1, chance: 15, variety: 1}, rareSprinklerCard: {min: 1, max: 2, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 10, variety: 1}, epicHeroCard: {min: 1, max: 1, chance: 7, variety: 1}, epicHeroUnlock: {min: 1, max: 1, chance: 5, variety: 1}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T2_Rare": { rarity: "rare", seedToken: {min: 275, max: 325}, toolToken: {min: 18, max: 30}, commonHeroCard: {min: 5, max: 6, chance: 100, variety: 2}, commonHeroUnlock: {min: 2, max: 3, chance: 40, variety: 1}, commonSprinklerCard: {min: 3, max: 6, chance: 100, variety: 1}, commonSprinklerUnlock: {min: 1, max: 2, chance: 20, variety: 1}, uncommonHeroCard: {min: 4, max: 6, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 2, max: 3, chance: 40, variety: 1}, uncommonSprinklerCard: {min: 2, max: 4, chance: 100, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 2, chance: 15, variety: 1}, rareHeroCard: {min: 6, max: 8, chance: 80, variety: 2}, rareHeroUnlock: {min: 1, max: 2, chance: 20, variety: 1}, rareSprinklerCard: {min: 1, max: 4, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 2, chance: 10, variety: 1}, epicHeroCard: {min: 1, max: 2, chance: 10, variety: 1}, epicHeroUnlock: {min: 1, max: 1, chance: 5, variety: 1}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T0_Epic": { rarity: "epic", seedToken: {min: 180, max: 250}, toolToken: {min: 25, max: 40}, commonHeroCard: {min: 4, max: 6, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, commonSprinklerCard: {min: 4, max: 5, chance: 100, variety: 1}, commonSprinklerUnlock: {min: 1, max: 1, chance: 30, variety: 1}, uncommonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 4, max: 6, chance: 100, variety: 1}, rareHeroUnlock: {min: 1, max: 1, chance: 20, variety: 1}, rareSprinklerCard: {min: 2, max: 3, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 15, variety: 1}, epicHeroCard: {min: 1, max: 2, chance: 80, variety: 1}, epicHeroUnlock: {min: 1, max: 1, chance: 10, variety: 1}, epicSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerUnlock: {min: 1, max: 1, chance: 10, variety: 1}, legendaryHeroCard: {min: 0, max: 0, chance: 0, variety: 0} },
+            "T1_Epic": { rarity: "epic", seedToken: {min: 275, max: 350}, toolToken: {min: 30, max: 50}, commonHeroCard: {min: 5, max: 6, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 50, variety: 1}, commonSprinklerCard: {min: 5, max: 6, chance: 100, variety: 2}, commonSprinklerUnlock: {min: 1, max: 1, chance: 40, variety: 1}, uncommonHeroCard: {min: 3, max: 5, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 50, variety: 1}, uncommonSprinklerCard: {min: 2, max: 3, chance: 100, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 30, variety: 1}, rareHeroCard: {min: 6, max: 8, chance: 100, variety: 2}, rareHeroUnlock: {min: 1, max: 1, chance: 30, variety: 1}, rareSprinklerCard: {min: 2, max: 3, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 25, variety: 1}, epicHeroCard: {min: 4, max: 6, chance: 80, variety: 1}, epicHeroUnlock: {min: 1, max: 1, chance: 15, variety: 1}, epicSprinklerCard: {min: 1, max: 2, chance: 50, variety: 1}, epicSprinklerUnlock: {min: 1, max: 1, chance: 10, variety: 1}, legendaryHeroCard: {min: 2, max: 2, chance: 100, variety: 0} },
+            "T2_Epic": { rarity: "epic", seedToken: {min: 275, max: 350}, toolToken: {min: 40, max: 60}, commonHeroCard: {min: 4, max: 6, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 100, variety: 1}, commonSprinklerCard: {min: 3, max: 5, chance: 100, variety: 2}, commonSprinklerUnlock: {min: 1, max: 1, chance: 50, variety: 1}, uncommonHeroCard: {min: 4, max: 6, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 100, variety: 1}, uncommonSprinklerCard: {min: 2, max: 3, chance: 100, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 45, variety: 1}, rareHeroCard: {min: 7, max: 9, chance: 100, variety: 2}, rareHeroUnlock: {min: 1, max: 1, chance: 40, variety: 1}, rareSprinklerCard: {min: 2, max: 3, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 40, variety: 1}, epicHeroCard: {min: 5, max: 7, chance: 80, variety: 2}, epicHeroUnlock: {min: 1, max: 1, chance: 20, variety: 1}, epicSprinklerCard: {min: 1, max: 2, chance: 100, variety: 1}, epicSprinklerUnlock: {min: 1, max: 1, chance: 30, variety: 1}, legendaryHeroCard: {min: 3, max: 3, chance: 100, variety: 0} },
+            "T0_Legendary": { rarity: "legendary", seedToken: {min: 300, max: 375}, toolToken: {min: 50, max: 70}, commonHeroCard: {min: 3, max: 5, chance: 100, variety: 2}, commonHeroUnlock: {min: 1, max: 1, chance: 100, variety: 1}, commonSprinklerCard: {min: 4, max: 5, chance: 100, variety: 2}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 4, max: 6, chance: 100, variety: 1}, uncommonHeroUnlock: {min: 1, max: 1, chance: 100, variety: 1}, uncommonSprinklerCard: {min: 3, max: 4, chance: 100, variety: 1}, uncommonSprinklerUnlock: {min: 1, max: 1, chance: 50, variety: 1}, rareHeroCard: {min: 8, max: 10, chance: 100, variety: 2}, rareHeroUnlock: {min: 1, max: 1, chance: 75, variety: 1}, rareSprinklerCard: {min: 3, max: 4, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 1, max: 1, chance: 75, variety: 1}, epicHeroCard: {min: 5, max: 7, chance: 100, variety: 2}, epicHeroUnlock: {min: 1, max: 1, chance: 50, variety: 1}, epicSprinklerCard: {min: 1, max: 2, chance: 100, variety: 1}, epicSprinklerUnlock: {min: 1, max: 1, chance: 50, variety: 1}, legendaryHeroCard: {min: 3, max: 3, chance: 100, variety: 0} },
+            "T0_Mythical": { rarity: "mythical", seedToken: {min: 600, max: 600}, toolToken: {min: 200, max: 200}, commonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, commonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, commonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerCard: {min: 0, max: 0, chance: 0, variety: 0}, uncommonSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareHeroCard: {min: 15, max: 15, chance: 100, variety: 2}, rareHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, rareSprinklerCard: {min: 5, max: 5, chance: 100, variety: 1}, rareSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicHeroCard: {min: 10, max: 10, chance: 100, variety: 2}, epicHeroUnlock: {min: 0, max: 0, chance: 0, variety: 0}, epicSprinklerCard: {min: 5, max: 5, chance: 100, variety: 1}, epicSprinklerUnlock: {min: 0, max: 0, chance: 0, variety: 0}, legendaryHeroCard: {min: 4, max: 4, chance: 100, variety: 0} }
+        };
+
+        let selectedPacks = [];
+        let packCounts = {};
+        let savedConfigurations = [];
+        let configCounter = 1;
+        let comparisonPacks = [];
+        let comparisonCount = 3;
+        let cumulativeResults = null;
+        let totalPacksOpened = 0;
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ignore if user is typing in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            const key = e.key.toLowerCase();
+            
+            if (key === 'r') {
+                e.preventDefault();
+                runSimulation();
+            } else if (key === 'c') {
+                e.preventDefault();
+                runComparison();
+            }
+        });
+
+        // Initialize hero and sprinkler configuration tables
+        function initializeConfigTables() {
+            // Hero Seed Cost Table
+            const heroSeedTable = document.getElementById('hero-seed-cost-table');
+            for (let lv = 1; lv <= 20; lv++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${lv}</td>
+                    <td><input type="number" value="${heroConfig.seedCost.common[lv-1] || 0}" onchange="heroConfig.seedCost.common[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.seedCost.uncommon[lv-1] || 0}" onchange="heroConfig.seedCost.uncommon[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.seedCost.rare[lv-1] || 0}" onchange="heroConfig.seedCost.rare[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.seedCost.epic[lv-1] || 0}" onchange="heroConfig.seedCost.epic[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.seedCost.legendary[lv-1] || 0}" onchange="heroConfig.seedCost.legendary[${lv-1}] = parseInt(this.value)"></td>
+                `;
+                heroSeedTable.appendChild(row);
+            }
+
+            // Hero Card Cost Table (20 levels)
+            const heroCardTable = document.getElementById('hero-card-cost-table');
+            for (let lv = 1; lv <= 20; lv++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${lv}</td>
+                    <td><input type="number" value="${heroConfig.cardCost.common[lv-1] || 0}" onchange="heroConfig.cardCost.common[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.cardCost.uncommon[lv-1] || 0}" onchange="heroConfig.cardCost.uncommon[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.cardCost.rare[lv-1] || 0}" onchange="heroConfig.cardCost.rare[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.cardCost.epic[lv-1] || 0}" onchange="heroConfig.cardCost.epic[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${heroConfig.cardCost.legendary[lv-1] || 0}" onchange="heroConfig.cardCost.legendary[${lv-1}] = parseInt(this.value)"></td>
+                `;
+                heroCardTable.appendChild(row);
+            }
+
+            // Sprinkler Tool Cost Table
+            const sprinklerToolTable = document.getElementById('sprinkler-tool-cost-table');
+            for (let lv = 2; lv <= 10; lv++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${lv}</td>
+                    <td><input type="number" value="${sprinklerConfig.toolCost.common[lv-1] || 0}" onchange="sprinklerConfig.toolCost.common[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.toolCost.uncommon[lv-1] || 0}" onchange="sprinklerConfig.toolCost.uncommon[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.toolCost.rare[lv-1] || 0}" onchange="sprinklerConfig.toolCost.rare[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.toolCost.epic[lv-1] || 0}" onchange="sprinklerConfig.toolCost.epic[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.toolCost.legendary[lv-1] || 0}" onchange="sprinklerConfig.toolCost.legendary[${lv-1}] = parseInt(this.value)"></td>
+                `;
+                sprinklerToolTable.appendChild(row);
+            }
+
+            // Sprinkler Card Cost Table
+            const sprinklerCardTable = document.getElementById('sprinkler-card-cost-table');
+            for (let lv = 2; lv <= 10; lv++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${lv}</td>
+                    <td><input type="number" value="${sprinklerConfig.cardCost.common[lv-1] || 0}" onchange="sprinklerConfig.cardCost.common[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.cardCost.uncommon[lv-1] || 0}" onchange="sprinklerConfig.cardCost.uncommon[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.cardCost.rare[lv-1] || 0}" onchange="sprinklerConfig.cardCost.rare[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.cardCost.epic[lv-1] || 0}" onchange="sprinklerConfig.cardCost.epic[${lv-1}] = parseInt(this.value)"></td>
+                    <td><input type="number" value="${sprinklerConfig.cardCost.legendary[lv-1] || 0}" onchange="sprinklerConfig.cardCost.legendary[${lv-1}] = parseInt(this.value)"></td>
+                `;
+                sprinklerCardTable.appendChild(row);
+            }
+        }
+
+        // Calculate total cards needed to max a hero from current level
+        function getHeroCardsNeeded(rarity, currentLevel) {
+            let total = 0;
+            for (let i = currentLevel; i < heroConfig.maxLevel && i < heroConfig.cardCost[rarity].length; i++) {
+                total += heroConfig.cardCost[rarity][i];
+            }
+            return total;
+        }
+
+        // Calculate total seeds needed to max a hero from current level
+        function getHeroSeedsNeeded(rarity, currentLevel) {
+            let total = 0;
+            for (let i = currentLevel; i < heroConfig.maxLevel && i < heroConfig.seedCost[rarity].length; i++) {
+                total += heroConfig.seedCost[rarity][i];
+            }
+            return total;
+        }
+
+        // Calculate total cards needed to max a sprinkler from current level
+        function getSprinklerCardsNeeded(rarity, currentLevel) {
+            let total = 0;
+            for (let i = currentLevel; i < sprinklerConfig.maxLevel && i < sprinklerConfig.cardCost[rarity].length; i++) {
+                total += sprinklerConfig.cardCost[rarity][i];
+            }
+            return total;
+        }
+
+        // Calculate total tools needed to max a sprinkler from current level
+        function getSprinklerToolsNeeded(rarity, currentLevel) {
+            let total = 0;
+            for (let i = currentLevel; i < sprinklerConfig.maxLevel && i < sprinklerConfig.toolCost[rarity].length; i++) {
+                total += sprinklerConfig.toolCost[rarity][i];
+            }
+            return total;
+        }
+
+        // Process hero cards and level up
+        function processHeroCards(rarity, cards) {
+            const heroes = heroProgress[rarity].heroes;
+            let remainingCards = cards;
+
+            // Auto-unlock heroes if cards arrive but none are unlocked yet (e.g. legendary)
+            if (cards > 0 && heroes.length === 0) {
+                const maxHeroes = heroConfig.count[rarity];
+                for (let i = 0; i < maxHeroes; i++) {
+                    heroes.push({ id: i + 1, level: 1, cards: 0 });
+                }
+                heroProgress[rarity].unlocked = maxHeroes;
+            }
+
+            for (let hero of heroes) {
+                while (remainingCards > 0 && hero.level < heroConfig.maxLevel) {
+                    const cardsNeeded = heroConfig.cardCost[rarity][hero.level] || 0;
+                    if (cardsNeeded === 0) { hero.level = heroConfig.maxLevel; break; }
+                    const cardsToAdd = Math.min(remainingCards, cardsNeeded - hero.cards);
+                    
+                    hero.cards += cardsToAdd;
+                    remainingCards -= cardsToAdd;
+
+                    // Level up if enough cards
+                    if (hero.cards >= cardsNeeded) {
+                        hero.cards -= cardsNeeded;
+                        hero.level++;
+                    }
+                }
+            }
+        }
+
+        // Process sprinkler cards and level up
+        function processSprinklerCards(rarity, cards) {
+            const sprinklers = sprinklerProgress[rarity].sprinklers;
+            let remainingCards = cards;
+
+            for (let sprinkler of sprinklers) {
+                while (remainingCards > 0 && sprinkler.level < sprinklerConfig.maxLevel) {
+                    const cardsNeeded = sprinklerConfig.cardCost[rarity][sprinkler.level - 1] || 0;
+                    const cardsToAdd = Math.min(remainingCards, cardsNeeded - sprinkler.cards);
+                    
+                    sprinkler.cards += cardsToAdd;
+                    remainingCards -= cardsToAdd;
+
+                    // Level up if enough cards
+                    if (sprinkler.cards >= cardsNeeded) {
+                        sprinkler.cards -= cardsNeeded;
+                        sprinkler.level++;
+                    }
+                }
+            }
+        }
+
+        // Process hero unlocks
+        function processHeroUnlocks(results, rarity) {
+            const unlocks = results[`${rarity}HeroUnlocks`];
+            const maxHeroes = heroConfig.count[rarity];
+            const currentUnlocked = heroProgress[rarity].unlocked;
+            
+            if (currentUnlocked < maxHeroes) {
+                const toUnlock = Math.min(unlocks, maxHeroes - currentUnlocked);
+                for (let i = 0; i < toUnlock; i++) {
+                    heroProgress[rarity].heroes.push({
+                        id: currentUnlocked + i + 1,
+                        level: 1,
+                        cards: 0
+                    });
+                }
+                heroProgress[rarity].unlocked += toUnlock;
+                results[`${rarity}HeroUnlocks`] = toUnlock;
+            } else {
+                results[`${rarity}HeroUnlocks`] = 0;
+            }
+        }
+
+        // Process sprinkler unlocks
+        function processSprinklerUnlocks(results, rarity) {
+            const unlocks = results[`${rarity}SprinklerUnlocks`];
+            const maxSprinklers = sprinklerConfig.count[rarity];
+            const currentUnlocked = sprinklerProgress[rarity].unlocked;
+            
+            if (currentUnlocked < maxSprinklers) {
+                const toUnlock = Math.min(unlocks, maxSprinklers - currentUnlocked);
+                for (let i = 0; i < toUnlock; i++) {
+                    sprinklerProgress[rarity].sprinklers.push({
+                        id: currentUnlocked + i + 1,
+                        level: 1,
+                        cards: 0
+                    });
+                }
+                sprinklerProgress[rarity].unlocked += toUnlock;
+                results[`${rarity}SprinklerUnlocks`] = toUnlock;
+            } else {
+                results[`${rarity}SprinklerUnlocks`] = 0;
+            }
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        function loadConfigurations() {
+            const saved = localStorage.getItem('gachaConfigurations');
+            if (saved) {
+                savedConfigurations = JSON.parse(saved);
+                configCounter = savedConfigurations.length + 1;
+            }
+        }
+
+        function saveConfigurations() {
+            localStorage.setItem('gachaConfigurations', JSON.stringify(savedConfigurations));
+        }
+
+        function initializePackButtons() {
+            Object.keys(RARITIES).forEach(rarity => {
+                const container = document.getElementById(`${rarity}-packs`);
+                RARITIES[rarity].forEach(packName => {
+                    const button = document.createElement('button');
+                    button.className = `pack-button ${rarity}`;
+                    button.textContent = packName;
+                    button.setAttribute('data-pack', packName);
+                    button.onclick = () => togglePack(packName, button);
+                    container.appendChild(button);
+                });
+            });
+        }
+
+        function toggleAllPacks(rarity, isChecked) {
+            const packsInRarity = RARITIES[rarity];
+            packsInRarity.forEach(packName => {
+                const button = document.querySelector(`[data-pack="${packName}"]`);
+                const index = selectedPacks.indexOf(packName);
+                
+                if (isChecked && index === -1) {
+                    selectedPacks.push(packName);
+                    packCounts[packName] = 10;
+                    button.classList.add('selected');
+                } else if (!isChecked && index > -1) {
+                    selectedPacks.splice(index, 1);
+                    delete packCounts[packName];
+                    button.classList.remove('selected');
+                }
+            });
+            updateSimulationPacksDisplay();
+            updatePackConfigurationDisplay();
+        }
+
+        function togglePack(packName, button) {
+            const index = selectedPacks.indexOf(packName);
+            if (index > -1) {
+                selectedPacks.splice(index, 1);
+                delete packCounts[packName];
+                button.classList.remove('selected');
+            } else {
+                selectedPacks.push(packName);
+                packCounts[packName] = 10;
+                button.classList.add('selected');
+            }
+            updateSimulationPacksDisplay();
+            updatePackConfigurationDisplay();
+        }
+
+        function updateSimulationPacksDisplay() {
+            const container = document.getElementById('simulation-packs-container');
+            if (selectedPacks.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-dim); font-size: 10px;">No packs selected</div>';
+                return;
+            }
+
+            container.innerHTML = selectedPacks.map(packName => {
+                const rarity = packData[packName].rarity;
+                return `
+                <div class="simulation-pack-item">
+                    <span class="simulation-pack-label ${rarity}">${packName}</span>
+                    <label style="font-size: 10px; color: var(--text-dim);">Packs:</label>
+                    <input type="number" 
+                           class="simulation-pack-input" 
+                           value="${packCounts[packName]}" 
+                           min="1" 
+                           max="10000"
+                           onchange="packCounts['${packName}'] = parseInt(this.value)">
+                </div>
+            `}).join('');
+        }
+
+        function updatePackConfigurationDisplay() {
+            const container = document.getElementById('pack-configuration-container');
+            if (selectedPacks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔧</div>
+                        <strong>Select packs to configure their properties</strong>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = getSortedPacksByOrder().map(packName => createPackDetailCard(packName)).join('');
+        }
+
+        function resetSimulation() {
+            selectedPacks = [];
+            packCounts = {};
+            cumulativeResults = null;
+            totalPacksOpened = 0;
+            availableSeeds = 0;
+            availableTools = 0;
+            
+            // Reset hero and sprinkler progress
+            ['common', 'uncommon', 'rare', 'epic', 'legendary'].forEach(rarity => {
+                heroProgress[rarity] = {unlocked: 0, heroes: []};
+                sprinklerProgress[rarity] = {unlocked: 0, sprinklers: []};
+            });
+            
+            document.querySelectorAll('.pack-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            document.querySelectorAll('.select-all-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+            document.getElementById('cumulative-checkbox').checked = false;
+            updateSimulationPacksDisplay();
+            updatePackConfigurationDisplay();
+            document.getElementById('results-container').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎲</div>
+                    <strong>Select packs and run simulation to see results</strong>
+                </div>
+            `;
+        }
+
+        function resetComparison() {
+            comparisonPacks = [];
+            renderComparisonSelectors();
+            document.getElementById('comparison-results').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <strong>Select packs and click Compare to see results</strong>
+                </div>
+            `;
+        }
+
+        // Configuration management
+        function openConfigModal() {
+            document.getElementById('config-modal').classList.add('active');
+            renderConfigList();
+        }
+
+        function closeConfigModal() {
+            document.getElementById('config-modal').classList.remove('active');
+        }
+
+        function openConfirmModal(message, onConfirm) {
+            document.getElementById('confirm-message').textContent = message;
+            document.getElementById('confirm-yes-btn').onclick = () => {
+                onConfirm();
+                closeConfirmModal();
+            };
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+        }
+
+        function saveCurrentSetup() {
+            const config = {
+                id: Date.now(),
+                name: `Setup${configCounter++}`,
+                packData: JSON.parse(JSON.stringify(packData)),
+                heroConfig: JSON.parse(JSON.stringify(heroConfig)),
+                sprinklerConfig: JSON.parse(JSON.stringify(sprinklerConfig)),
+                selectedPacks: [...selectedPacks],
+                packCounts: {...packCounts}
+            };
+            savedConfigurations.unshift(config);
+            saveConfigurations();
+            renderConfigList();
+        }
+
+        function renderConfigList() {
+            const listContainer = document.getElementById('config-list');
+            if (savedConfigurations.length === 0) {
+                listContainer.innerHTML = '<div style="color: var(--text-dim); font-size: 10px; text-align: center; padding: 20px;">No saved configurations</div>';
+                return;
+            }
+
+            listContainer.innerHTML = savedConfigurations.map((config, index) => `
+                <div class="config-item">
+                    <input type="text" 
+                           class="config-name" 
+                           value="${config.name}"
+                           onchange="updateConfigName(${config.id}, this.value)"
+                           onclick="this.select()">
+                    <button class="config-item-btn" onclick="confirmApplyConfig(${config.id})">Apply</button>
+                    <button class="config-item-btn delete" onclick="confirmDeleteConfig(${config.id})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function updateConfigName(id, newName) {
+            const config = savedConfigurations.find(c => c.id === id);
+            if (config) {
+                config.name = newName;
+                saveConfigurations();
+            }
+        }
+
+        function confirmApplyConfig(id) {
+            openConfirmModal('Are you sure you want to apply this configuration?', () => applyConfig(id));
+        }
+
+        function applyConfig(id) {
+            const config = savedConfigurations.find(c => c.id === id);
+            if (config) {
+                Object.assign(packData, JSON.parse(JSON.stringify(config.packData)));
+                Object.assign(heroConfig, JSON.parse(JSON.stringify(config.heroConfig)));
+                Object.assign(sprinklerConfig, JSON.parse(JSON.stringify(config.sprinklerConfig)));
+                selectedPacks = [...config.selectedPacks];
+                packCounts = {...config.packCounts};
+                
+                document.querySelectorAll('.pack-button').forEach(btn => {
+                    const packName = btn.getAttribute('data-pack');
+                    if (selectedPacks.includes(packName)) {
+                        btn.classList.add('selected');
+                    } else {
+                        btn.classList.remove('selected');
+                    }
+                });
+                
+                updateSimulationPacksDisplay();
+                updatePackConfigurationDisplay();
+                initializeConfigTables();
+                closeConfigModal();
+            }
+        }
+
+        function confirmDeleteConfig(id) {
+            openConfirmModal('Are you sure you want to delete this configuration?', () => deleteConfig(id));
+        }
+
+        function deleteConfig(id) {
+            savedConfigurations = savedConfigurations.filter(c => c.id !== id);
+            saveConfigurations();
+            renderConfigList();
+        }
+
+        // Pack Comparison
+        function addComparisonPack() {
+            comparisonPacks.push(null);
+            comparisonCount = comparisonPacks.length;
+            renderComparisonSelectors();
+        }
+
+        function removeComparisonPack() {
+            if (comparisonPacks.length > 2) {
+                comparisonPacks.pop();
+                comparisonCount = comparisonPacks.length;
+                renderComparisonSelectors();
+            }
+        }
+
+        function getPacksByRarity() {
+            const byRarity = {
+                common: [],
+                uncommon: [],
+                rare: [],
+                epic: [],
+                legendary: [],
+                mythical: []
+            };
+            
+            Object.keys(packData).forEach(packName => {
+                const rarity = packData[packName].rarity;
+                byRarity[rarity].push(packName);
+            });
+            
+            return byRarity;
+        }
+
+        function renderComparisonSelectors() {
+            const container = document.getElementById('comparison-selectors');
+            const packsByRarity = getPacksByRarity();
+            
+            const selectorsHtml = comparisonPacks.map((pack, index) => `
+                <div class="pack-selector">
+                    <button class="pack-selector-btn ${pack ? packData[pack].rarity : ''}" onclick="togglePackDropdown(${index})">
+                        ${pack || `Select Pack ${index + 1}`}
+                    </button>
+                    <div class="pack-dropdown" id="dropdown-${index}">
+                        ${Object.keys(packsByRarity).map(rarity => `
+                            <div class="pack-dropdown-rarity-group">
+                                <div class="pack-dropdown-rarity-label">${rarity}</div>
+                                ${packsByRarity[rarity].map(packName => `
+                                    <div class="pack-dropdown-item ${rarity}" onclick="selectComparisonPack(${index}, '${packName}')">
+                                        ${packName}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            const controlsHtml = `
+                <div class="pack-controls">
+                    <button class="pack-control-btn" onclick="removeComparisonPack()" title="Remove pack">−</button>
+                    <button class="pack-control-btn" onclick="addComparisonPack()" title="Add pack">+</button>
+                </div>
+            `;
+            
+            container.innerHTML = selectorsHtml + controlsHtml;
+        }
+
+        function togglePackDropdown(index) {
+            const dropdown = document.getElementById(`dropdown-${index}`);
+            document.querySelectorAll('.pack-dropdown').forEach(d => {
+                if (d !== dropdown) d.classList.remove('active');
+            });
+            dropdown.classList.toggle('active');
+        }
+
+        function selectComparisonPack(index, packName) {
+            comparisonPacks[index] = packName;
+            renderComparisonSelectors();
+            document.getElementById(`dropdown-${index}`).classList.remove('active');
+        }
+
+        function runComparison() {
+            const validPacks = comparisonPacks.filter(p => p !== null);
+            if (validPacks.length === 0) {
+                showToast('Select at least one pack to compare!');
+                return;
+            }
+
+            const comparisonResults = validPacks.map(packName => {
+                const result = simulatePack(packName);
+                return { packName, ...result };
+            });
+
+            displayComparison(comparisonResults);
+        }
+
+        function createPieChart(packName, data) {
+            const total = data.commonHeroCards + data.uncommonHeroCards + data.rareHeroCards + data.epicHeroCards + data.legendaryHeroCards;
+            
+            if (total === 0) {
+                return `
+                    <div class="comparison-pie-container">
+                        <div class="comparison-pie-title ${packData[packName].rarity}">${packName}</div>
+                        <div style="text-align: center; padding: 40px; color: var(--text-dim); font-size: 10px;">No cards</div>
+                    </div>
+                `;
+            }
+
+            const percentages = {
+                common: (data.commonHeroCards / total) * 100,
+                uncommon: (data.uncommonHeroCards / total) * 100,
+                rare: (data.rareHeroCards / total) * 100,
+                epic: (data.epicHeroCards / total) * 100,
+                legendary: (data.legendaryHeroCards / total) * 100
+            };
+
+            let cumulativePercent = 0;
+            const gradientSegments = [];
+            
+            ['common', 'uncommon', 'rare', 'epic', 'legendary'].forEach(rarity => {
+                if (percentages[rarity] > 0) {
+                    const colors = RARITY_COLORS[rarity];
+                    const startPercent = cumulativePercent;
+                    const endPercent = cumulativePercent + percentages[rarity];
+                    
+                    gradientSegments.push(`${colors.dark} ${startPercent}%`);
+                    gradientSegments.push(`${colors.light} ${(startPercent + endPercent) / 2}%`);
+                    gradientSegments.push(`${colors.dark} ${endPercent}%`);
+                    
+                    cumulativePercent = endPercent;
+                }
+            });
+
+            const gradient = `conic-gradient(from 0deg, ${gradientSegments.join(', ')})`;
+
+            return `
+                <div class="comparison-pie-container">
+                    <div class="comparison-pie-title ${packData[packName].rarity}">${packName}</div>
+                    <div class="pie-chart" style="background: ${gradient};"></div>
+                    <div class="pie-legend">
+                        ${data.commonHeroCards > 0 ? `
+                            <div class="pie-legend-item">
+                                <div class="pie-legend-color" style="background: linear-gradient(135deg, ${RARITY_COLORS.common.dark}, ${RARITY_COLORS.common.light});"></div>
+                                <span class="pie-legend-text">Common: ${data.commonHeroCards}</span>
+                            </div>
+                        ` : ''}
+                        ${data.uncommonHeroCards > 0 ? `
+                            <div class="pie-legend-item">
+                                <div class="pie-legend-color" style="background: linear-gradient(135deg, ${RARITY_COLORS.uncommon.dark}, ${RARITY_COLORS.uncommon.light});"></div>
+                                <span class="pie-legend-text">Uncommon: ${data.uncommonHeroCards}</span>
+                            </div>
+                        ` : ''}
+                        ${data.rareHeroCards > 0 ? `
+                            <div class="pie-legend-item">
+                                <div class="pie-legend-color" style="background: linear-gradient(135deg, ${RARITY_COLORS.rare.dark}, ${RARITY_COLORS.rare.light});"></div>
+                                <span class="pie-legend-text">Rare: ${data.rareHeroCards}</span>
+                            </div>
+                        ` : ''}
+                        ${data.epicHeroCards > 0 ? `
+                            <div class="pie-legend-item">
+                                <div class="pie-legend-color" style="background: linear-gradient(135deg, ${RARITY_COLORS.epic.dark}, ${RARITY_COLORS.epic.light});"></div>
+                                <span class="pie-legend-text">Epic: ${data.epicHeroCards}</span>
+                            </div>
+                        ` : ''}
+                        ${data.legendaryHeroCards > 0 ? `
+                            <div class="pie-legend-item">
+                                <div class="pie-legend-color" style="background: linear-gradient(135deg, ${RARITY_COLORS.legendary.dark}, ${RARITY_COLORS.legendary.light});"></div>
+                                <span class="pie-legend-text">Legendary: ${data.legendaryHeroCards}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayComparison(results) {
+            const container = document.getElementById('comparison-results');
+            
+            container.innerHTML = `
+                <div class="comparison-charts">
+                    ${results.map(result => createPieChart(result.packName, result)).join('')}
+                </div>
+            `;
+        }
+
+        function random(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function simulatePack(packName) {
+            const pack = packData[packName];
+            const results = {
+                seedTokens: random(pack.seedToken.min, pack.seedToken.max),
+                toolTokens: random(pack.toolToken.min, pack.toolToken.max),
+                commonHeroCards: 0, commonHeroUnlocks: 0, commonSprinklerCards: 0, commonSprinklerUnlocks: 0,
+                uncommonHeroCards: 0, uncommonHeroUnlocks: 0, uncommonSprinklerCards: 0, uncommonSprinklerUnlocks: 0,
+                rareHeroCards: 0, rareHeroUnlocks: 0, rareSprinklerCards: 0, rareSprinklerUnlocks: 0,
+                epicHeroCards: 0, epicHeroUnlocks: 0, epicSprinklerCards: 0, epicSprinklerUnlocks: 0,
+                legendaryHeroCards: 0
+            };
+
+            if (Math.random() * 100 < pack.commonHeroCard.chance) results.commonHeroCards = random(pack.commonHeroCard.min, pack.commonHeroCard.max);
+            if (Math.random() * 100 < pack.commonHeroUnlock.chance) results.commonHeroUnlocks = random(pack.commonHeroUnlock.min, pack.commonHeroUnlock.max);
+            if (Math.random() * 100 < pack.commonSprinklerCard.chance) results.commonSprinklerCards = random(pack.commonSprinklerCard.min, pack.commonSprinklerCard.max);
+            if (Math.random() * 100 < pack.commonSprinklerUnlock.chance) results.commonSprinklerUnlocks = random(pack.commonSprinklerUnlock.min, pack.commonSprinklerUnlock.max);
+            if (Math.random() * 100 < pack.uncommonHeroCard.chance) results.uncommonHeroCards = random(pack.uncommonHeroCard.min, pack.uncommonHeroCard.max);
+            if (Math.random() * 100 < pack.uncommonHeroUnlock.chance) results.uncommonHeroUnlocks = random(pack.uncommonHeroUnlock.min, pack.uncommonHeroUnlock.max);
+            if (Math.random() * 100 < pack.uncommonSprinklerCard.chance) results.uncommonSprinklerCards = random(pack.uncommonSprinklerCard.min, pack.uncommonSprinklerCard.max);
+            if (Math.random() * 100 < pack.uncommonSprinklerUnlock.chance) results.uncommonSprinklerUnlocks = random(pack.uncommonSprinklerUnlock.min, pack.uncommonSprinklerUnlock.max);
+            if (Math.random() * 100 < pack.rareHeroCard.chance) results.rareHeroCards = random(pack.rareHeroCard.min, pack.rareHeroCard.max);
+            if (Math.random() * 100 < pack.rareHeroUnlock.chance) results.rareHeroUnlocks = random(pack.rareHeroUnlock.min, pack.rareHeroUnlock.max);
+            if (Math.random() * 100 < pack.rareSprinklerCard.chance) results.rareSprinklerCards = random(pack.rareSprinklerCard.min, pack.rareSprinklerCard.max);
+            if (Math.random() * 100 < pack.rareSprinklerUnlock.chance) results.rareSprinklerUnlocks = random(pack.rareSprinklerUnlock.min, pack.rareSprinklerUnlock.max);
+            if (Math.random() * 100 < pack.epicHeroCard.chance) results.epicHeroCards = random(pack.epicHeroCard.min, pack.epicHeroCard.max);
+            if (Math.random() * 100 < pack.epicHeroUnlock.chance) results.epicHeroUnlocks = random(pack.epicHeroUnlock.min, pack.epicHeroUnlock.max);
+            if (Math.random() * 100 < pack.epicSprinklerCard.chance) results.epicSprinklerCards = random(pack.epicSprinklerCard.min, pack.epicSprinklerCard.max);
+            if (Math.random() * 100 < pack.epicSprinklerUnlock.chance) results.epicSprinklerUnlocks = random(pack.epicSprinklerUnlock.min, pack.epicSprinklerUnlock.max);
+            if (Math.random() * 100 < pack.legendaryHeroCard.chance) results.legendaryHeroCards = random(pack.legendaryHeroCard.min, pack.legendaryHeroCard.max);
+
+            return results;
+        }
+
+        function calculateWorstCase() {
+            const results = {
+                seedTokens: 0, toolTokens: 0,
+                commonHeroCards: 0, commonHeroUnlocks: 0, commonSprinklerCards: 0, commonSprinklerUnlocks: 0,
+                uncommonHeroCards: 0, uncommonHeroUnlocks: 0, uncommonSprinklerCards: 0, uncommonSprinklerUnlocks: 0,
+                rareHeroCards: 0, rareHeroUnlocks: 0, rareSprinklerCards: 0, rareSprinklerUnlocks: 0,
+                epicHeroCards: 0, epicHeroUnlocks: 0, epicSprinklerCards: 0, epicSprinklerUnlocks: 0,
+                legendaryHeroCards: 0
+            };
+
+            selectedPacks.forEach(packName => {
+                const pack = packData[packName];
+                const count = packCounts[packName] || 10;
+                for (let i = 0; i < count; i++) {
+                    results.seedTokens += pack.seedToken.min;
+                    results.toolTokens += pack.toolToken.min;
+                    if (pack.commonHeroCard.chance > 0) results.commonHeroCards += pack.commonHeroCard.min;
+                    if (pack.commonSprinklerCard.chance > 0) results.commonSprinklerCards += pack.commonSprinklerCard.min;
+                    if (pack.uncommonHeroCard.chance > 0) results.uncommonHeroCards += pack.uncommonHeroCard.min;
+                    if (pack.uncommonSprinklerCard.chance > 0) results.uncommonSprinklerCards += pack.uncommonSprinklerCard.min;
+                    if (pack.rareHeroCard.chance > 0) results.rareHeroCards += pack.rareHeroCard.min;
+                    if (pack.rareSprinklerCard.chance > 0) results.rareSprinklerCards += pack.rareSprinklerCard.min;
+                    if (pack.epicHeroCard.chance > 0) results.epicHeroCards += pack.epicHeroCard.min;
+                    if (pack.epicSprinklerCard.chance > 0) results.epicSprinklerCards += pack.epicSprinklerCard.min;
+                    if (pack.legendaryHeroCard.chance > 0) results.legendaryHeroCards += pack.legendaryHeroCard.min;
+                }
+            });
+            return results;
+        }
+
+        function calculateBestCase() {
+            const results = {
+                seedTokens: 0, toolTokens: 0,
+                commonHeroCards: 0, commonHeroUnlocks: 0, commonSprinklerCards: 0, commonSprinklerUnlocks: 0,
+                uncommonHeroCards: 0, uncommonHeroUnlocks: 0, uncommonSprinklerCards: 0, uncommonSprinklerUnlocks: 0,
+                rareHeroCards: 0, rareHeroUnlocks: 0, rareSprinklerCards: 0, rareSprinklerUnlocks: 0,
+                epicHeroCards: 0, epicHeroUnlocks: 0, epicSprinklerCards: 0, epicSprinklerUnlocks: 0,
+                legendaryHeroCards: 0
+            };
+
+            selectedPacks.forEach(packName => {
+                const pack = packData[packName];
+                const count = packCounts[packName] || 10;
+                for (let i = 0; i < count; i++) {
+                    results.seedTokens += pack.seedToken.max;
+                    results.toolTokens += pack.toolToken.max;
+                    if (pack.commonHeroCard.chance > 0) results.commonHeroCards += pack.commonHeroCard.max;
+                    if (pack.commonHeroUnlock.chance > 0) results.commonHeroUnlocks += pack.commonHeroUnlock.max;
+                    if (pack.commonSprinklerCard.chance > 0) results.commonSprinklerCards += pack.commonSprinklerCard.max;
+                    if (pack.commonSprinklerUnlock.chance > 0) results.commonSprinklerUnlocks += pack.commonSprinklerUnlock.max;
+                    if (pack.uncommonHeroCard.chance > 0) results.uncommonHeroCards += pack.uncommonHeroCard.max;
+                    if (pack.uncommonHeroUnlock.chance > 0) results.uncommonHeroUnlocks += pack.uncommonHeroUnlock.max;
+                    if (pack.uncommonSprinklerCard.chance > 0) results.uncommonSprinklerCards += pack.uncommonSprinklerCard.max;
+                    if (pack.uncommonSprinklerUnlock.chance > 0) results.uncommonSprinklerUnlocks += pack.uncommonSprinklerUnlock.max;
+                    if (pack.rareHeroCard.chance > 0) results.rareHeroCards += pack.rareHeroCard.max;
+                    if (pack.rareHeroUnlock.chance > 0) results.rareHeroUnlocks += pack.rareHeroUnlock.max;
+                    if (pack.rareSprinklerCard.chance > 0) results.rareSprinklerCards += pack.rareSprinklerCard.max;
+                    if (pack.rareSprinklerUnlock.chance > 0) results.rareSprinklerUnlocks += pack.rareSprinklerUnlock.max;
+                    if (pack.epicHeroCard.chance > 0) results.epicHeroCards += pack.epicHeroCard.max;
+                    if (pack.epicHeroUnlock.chance > 0) results.epicHeroUnlocks += pack.epicHeroUnlock.max;
+                    if (pack.epicSprinklerCard.chance > 0) results.epicSprinklerCards += pack.epicSprinklerCard.max;
+                    if (pack.epicSprinklerUnlock.chance > 0) results.epicSprinklerUnlocks += pack.epicSprinklerUnlock.max;
+                    if (pack.legendaryHeroCard.chance > 0) results.legendaryHeroCards += pack.legendaryHeroCard.max;
+                }
+            });
+            return results;
+        }
+
+        function showWorstCase() {
+            if (selectedPacks.length === 0) {
+                showToast('Select at least one pack!');
+                return;
+            }
+            const results = calculateWorstCase();
+            const packsCount = selectedPacks.reduce((sum, packName) => sum + (packCounts[packName] || 10), 0);
+            displayResults(results, 'WORST CASE', packsCount);
+        }
+
+        function showBestCase() {
+            if (selectedPacks.length === 0) {
+                showToast('Select at least one pack!');
+                return;
+            }
+            const results = calculateBestCase();
+            const packsCount = selectedPacks.reduce((sum, packName) => sum + (packCounts[packName] || 10), 0);
+            displayResults(results, 'BEST CASE', packsCount);
+        }
+
+        function runSimulation() {
+            if (selectedPacks.length === 0) {
+                showToast('Select at least one pack!');
+                return;
+            }
+
+            const isCumulative = document.getElementById('cumulative-checkbox').checked;
+            
+            const aggregatedResults = {
+                seedTokens: 0, toolTokens: 0,
+                commonHeroCards: 0, commonHeroUnlocks: 0, commonSprinklerCards: 0, commonSprinklerUnlocks: 0,
+                uncommonHeroCards: 0, uncommonHeroUnlocks: 0, uncommonSprinklerCards: 0, uncommonSprinklerUnlocks: 0,
+                rareHeroCards: 0, rareHeroUnlocks: 0, rareSprinklerCards: 0, rareSprinklerUnlocks: 0,
+                epicHeroCards: 0, epicHeroUnlocks: 0, epicSprinklerCards: 0, epicSprinklerUnlocks: 0,
+                legendaryHeroCards: 0
+            };
+
+            let currentPacksOpened = 0;
+            selectedPacks.forEach(packName => {
+                const count = packCounts[packName] || 10;
+                currentPacksOpened += count;
+                for (let i = 0; i < count; i++) {
+                    const results = simulatePack(packName);
+                    Object.keys(results).forEach(key => {
+                        aggregatedResults[key] += results[key];
+                    });
+                }
+            });
+
+            if (isCumulative && cumulativeResults) {
+                Object.keys(aggregatedResults).forEach(key => {
+                    aggregatedResults[key] += cumulativeResults[key];
+                });
+                totalPacksOpened += currentPacksOpened;
+            } else if (isCumulative) {
+                totalPacksOpened = currentPacksOpened;
+            } else {
+                totalPacksOpened = currentPacksOpened;
+                // Reset progress if not cumulative
+                ['common', 'uncommon', 'rare', 'epic', 'legendary'].forEach(rarity => {
+                    heroProgress[rarity] = {unlocked: 0, heroes: []};
+                    sprinklerProgress[rarity] = {unlocked: 0, sprinklers: []};
+                });
+                availableSeeds = 0;
+                availableTools = 0;
+            }
+
+            // Add tokens
+            availableSeeds += aggregatedResults.seedTokens;
+            availableTools += aggregatedResults.toolTokens;
+
+            // Process unlocks and cards
+            ['common', 'uncommon', 'rare', 'epic', 'legendary'].forEach(rarity => {
+                processHeroUnlocks(aggregatedResults, rarity);
+                processSprinklerUnlocks(aggregatedResults, rarity);
+                processHeroCards(rarity, aggregatedResults[`${rarity}HeroCards`]);
+                processSprinklerCards(rarity, aggregatedResults[`${rarity}SprinklerCards`]);
+            });
+
+            if (isCumulative) {
+                cumulativeResults = {...aggregatedResults};
+            }
+
+            displayResults(aggregatedResults, isCumulative ? 'CUMULATIVE SIMULATION' : 'SIMULATION', totalPacksOpened);
+        }
+
+        function displayResults(results, scenarioType, packsOpened) {
+            const container = document.getElementById('results-container');
+            
+            const totalCards = results.commonHeroCards + results.uncommonHeroCards + results.rareHeroCards + results.epicHeroCards + results.legendaryHeroCards;
+            
+            let html = `
+                <div class="section">
+                    <h2>Results - ${scenarioType}</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card seed-token">
+                            <div class="stat-card-title">Seed Tokens</div>
+                            <div class="stat-card-value">${results.seedTokens.toLocaleString()}</div>
+                        </div>
+                        <div class="stat-card tool-token">
+                            <div class="stat-card-title">Tool Tokens</div>
+                            <div class="stat-card-value">${results.toolTokens.toLocaleString()}</div>
+                        </div>
+                        <div class="stat-card total-cards">
+                            <div class="stat-card-title">Total Cards</div>
+                            <div class="stat-card-value">${totalCards.toLocaleString()}</div>
+                        </div>
+                        <div class="stat-card pack-count">
+                            <div class="stat-card-title">Total Packs Opened</div>
+                            <div class="stat-card-value">${packsOpened.toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section results-layout">
+                    <div class="phone-frame">
+                        <div class="phone-screen">
+                            <div class="screen-title">Pack Results</div>
+                            
+                            <div class="token-display">
+                                <div class="token-item">
+                                    <div class="token-label">Seed</div>
+                                    <div class="token-value">${results.seedTokens.toLocaleString()}</div>
+                                </div>
+                                <div class="token-item">
+                                    <div class="token-label">Tool</div>
+                                    <div class="token-value">${results.toolTokens.toLocaleString()}</div>
+                                </div>
+                            </div>
+
+                            <div class="rewards-grid">
+                                ${results.commonHeroCards > 0 ? `<div class="reward-card"><div class="reward-type common">Common H</div><div class="reward-count">×${results.commonHeroCards}</div></div>` : ''}
+                                ${results.uncommonHeroCards > 0 ? `<div class="reward-card"><div class="reward-type uncommon">Uncommon H</div><div class="reward-count">×${results.uncommonHeroCards}</div></div>` : ''}
+                                ${results.rareHeroCards > 0 ? `<div class="reward-card"><div class="reward-type rare">Rare H</div><div class="reward-count">×${results.rareHeroCards}</div></div>` : ''}
+                                ${results.epicHeroCards > 0 ? `<div class="reward-card"><div class="reward-type epic">Epic H</div><div class="reward-count">×${results.epicHeroCards}</div></div>` : ''}
+                                ${results.legendaryHeroCards > 0 ? `<div class="reward-card"><div class="reward-type legendary">Legendary H</div><div class="reward-count" style="color: var(--legendary-color);">×${results.legendaryHeroCards}</div></div>` : ''}
+                                ${results.commonSprinklerCards > 0 ? `<div class="reward-card"><div class="reward-type common">Common S</div><div class="reward-count">×${results.commonSprinklerCards}</div></div>` : ''}
+                                ${results.uncommonSprinklerCards > 0 ? `<div class="reward-card"><div class="reward-type uncommon">Uncommon S</div><div class="reward-count">×${results.uncommonSprinklerCards}</div></div>` : ''}
+                                ${results.rareSprinklerCards > 0 ? `<div class="reward-card"><div class="reward-type rare">Rare S</div><div class="reward-count">×${results.rareSprinklerCards}</div></div>` : ''}
+                                ${results.epicSprinklerCards > 0 ? `<div class="reward-card"><div class="reward-type epic">Epic S</div><div class="reward-count">×${results.epicSprinklerCards}</div></div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <h3>Hero Cards</h3>
+                                <div class="bar-chart">
+                                    ${createBar('CMN', results.commonHeroCards, 'common', Math.max(results.commonHeroCards, results.uncommonHeroCards, results.rareHeroCards, results.epicHeroCards, results.legendaryHeroCards))}
+                                    ${createBar('UNC', results.uncommonHeroCards, 'uncommon', Math.max(results.commonHeroCards, results.uncommonHeroCards, results.rareHeroCards, results.epicHeroCards, results.legendaryHeroCards))}
+                                    ${createBar('RAR', results.rareHeroCards, 'rare', Math.max(results.commonHeroCards, results.uncommonHeroCards, results.rareHeroCards, results.epicHeroCards, results.legendaryHeroCards))}
+                                    ${createBar('EPC', results.epicHeroCards, 'epic', Math.max(results.commonHeroCards, results.uncommonHeroCards, results.rareHeroCards, results.epicHeroCards, results.legendaryHeroCards))}
+                                    ${createBar('LEG', results.legendaryHeroCards, 'legendary', Math.max(results.commonHeroCards, results.uncommonHeroCards, results.rareHeroCards, results.epicHeroCards, results.legendaryHeroCards))}
+                                </div>
+                            </div>
+
+                            <div class="chart-container">
+                                <h3>Sprinkler Cards</h3>
+                                <div class="bar-chart">
+                                    ${createBar('CMN', results.commonSprinklerCards, 'common', Math.max(results.commonSprinklerCards, results.uncommonSprinklerCards, results.rareSprinklerCards, results.epicSprinklerCards, 1))}
+                                    ${createBar('UNC', results.uncommonSprinklerCards, 'uncommon', Math.max(results.commonSprinklerCards, results.uncommonSprinklerCards, results.rareSprinklerCards, results.epicSprinklerCards, 1))}
+                                    ${createBar('RAR', results.rareSprinklerCards, 'rare', Math.max(results.commonSprinklerCards, results.uncommonSprinklerCards, results.rareSprinklerCards, results.epicSprinklerCards, 1))}
+                                    ${createBar('EPC', results.epicSprinklerCards, 'epic', Math.max(results.commonSprinklerCards, results.uncommonSprinklerCards, results.rareSprinklerCards, results.epicSprinklerCards, 1))}
+                                </div>
+                            </div>
+
+                            <div class="chart-container">
+                                <h3>Hero Unlocks</h3>
+                                <div class="bar-chart">
+                                    ${createDualBar('CMN', heroProgress.common.unlocked, heroConfig.count.common, 'common')}
+                                    ${createDualBar('UNC', heroProgress.uncommon.unlocked, heroConfig.count.uncommon, 'uncommon')}
+                                    ${createDualBar('RAR', heroProgress.rare.unlocked, heroConfig.count.rare, 'rare')}
+                                    ${createDualBar('EPC', heroProgress.epic.unlocked, heroConfig.count.epic, 'epic')}
+                                    ${createDualBar('LEG', heroProgress.legendary.unlocked, heroConfig.count.legendary, 'legendary')}
+                                </div>
+                            </div>
+
+                            <div class="chart-container">
+                                <h3>Sprinkler Unlocks</h3>
+                                <div class="bar-chart">
+                                    ${createDualBar('CMN', sprinklerProgress.common.unlocked, sprinklerConfig.count.common, 'common')}
+                                    ${createDualBar('UNC', sprinklerProgress.uncommon.unlocked, sprinklerConfig.count.uncommon, 'uncommon')}
+                                    ${createDualBar('RAR', sprinklerProgress.rare.unlocked, sprinklerConfig.count.rare, 'rare')}
+                                    ${createDualBar('EPC', sprinklerProgress.epic.unlocked, sprinklerConfig.count.epic, 'epic')}
+                                    ${createDualBar('LEG', sprinklerProgress.legendary.unlocked, sprinklerConfig.count.legendary, 'legendary')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${createMaxOutSection(results)}
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function createMaxOutSection(results) {
+            let heroProgressHTML = '';
+            let sprinklerProgressHTML = '';
+            let totalHeroProgress = { current: 0, max: 0, cardsNeeded: 0, seedsNeeded: 0 };
+            let totalSprinklerProgress = { current: 0, max: 0, cardsNeeded: 0, toolsNeeded: 0 };
+
+            ['common', 'uncommon', 'rare', 'epic', 'legendary'].forEach(rarity => {
+                const heroes = heroProgress[rarity].heroes;
+                const sprinklers = sprinklerProgress[rarity].sprinklers;
+                const rc = RARITY_COLORS[rarity];
+
+                // ── Hero cards for this rarity ──
+                if (heroes.length > 0) {
+                    let rarityHTML = `
+                        <h3 style="margin: 20px 0 10px 0; color: ${rc.light}; border-left: 3px solid ${rc.light}; padding-left: 8px;">
+                            ${rarity.toUpperCase()} HEROES
+                        </h3>
+                        <div class="maxout-progress-grid">`;
+
+                    heroes.forEach((hero, index) => {
+                        const isMaxLevel = hero.level >= heroConfig.maxLevel;
+                        const cardsNeeded   = isMaxLevel ? 0 : getHeroCardsNeeded(rarity, hero.level);
+                        const seedsNeeded   = getHeroSeedsNeeded(rarity, hero.level);
+                        const cardCostNext  = heroConfig.cardCost[rarity][hero.level] || 0;
+
+                        // Card progress toward next level
+                        const cardNextPct   = isMaxLevel ? 100 : (cardCostNext > 0 ? Math.min(100, hero.cards / cardCostNext * 100) : 100);
+                        // Overall level progress
+                        const levelPct      = (hero.level / heroConfig.maxLevel * 100);
+                        // Seed coverage: how many of remaining seeds we have
+                        const seedCovered   = Math.min(availableSeeds, seedsNeeded);
+                        const seedPct       = seedsNeeded > 0 ? Math.min(100, seedCovered / seedsNeeded * 100) : 100;
+
+                        totalHeroProgress.current    += hero.level;
+                        totalHeroProgress.max        += heroConfig.maxLevel;
+                        totalHeroProgress.cardsNeeded += cardsNeeded;
+                        totalHeroProgress.seedsNeeded += seedsNeeded;
+
+                        rarityHTML += `
+                            <div class="hero-item ${rarity}" style="border-left: 3px solid ${rc.light};">
+                                <div class="hero-header">
+                                    <span class="hero-name" style="color:${rc.light};">${rarity.toUpperCase()} Hero #${index + 1}</span>
+                                    <span class="hero-level ${isMaxLevel ? 'maxed' : ''}" style="${isMaxLevel ? 'color:#fbbf24;font-weight:700;' : ''}">
+                                        ${isMaxLevel ? '★ MAX' : `Lv ${hero.level} / ${heroConfig.maxLevel}`}
+                                    </span>
+                                </div>
+
+                                <div class="progress-label">Level Progress</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width:${levelPct}%; background:linear-gradient(90deg,${rc.dark},${rc.light});">
+                                        ${levelPct.toFixed(0)}%
+                                    </div>
+                                </div>
+
+                                ${!isMaxLevel ? `
+                                <div class="progress-label" style="margin-top:6px;">Cards → Next Level (${hero.cards}/${cardCostNext})</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width:${cardNextPct.toFixed(1)}%; background:linear-gradient(90deg,${rc.dark},${rc.light}); opacity:0.7;">
+                                        ${cardNextPct.toFixed(0)}%
+                                    </div>
+                                </div>
+                                ` : ''}
+
+                                <div class="progress-label" style="margin-top:6px;">Seeds to Max (${availableSeeds.toLocaleString()} / ${(availableSeeds + seedsNeeded).toLocaleString()})</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width:${seedPct.toFixed(1)}%; background:linear-gradient(90deg,#7c3aed,#8b5cf6); opacity:0.85;">
+                                        ${seedPct.toFixed(0)}%
+                                    </div>
+                                </div>
+
+                                <div class="progress-detail" style="margin-top:6px; display:flex; gap:12px; flex-wrap:wrap;">
+                                    ${!isMaxLevel ? `<span>🃏 Cards to max: <strong>${cardsNeeded.toLocaleString()}</strong></span>` : '<span style="color:#fbbf24;">🃏 Cards: DONE</span>'}
+                                    <span>🌱 Seeds to max: <strong>${seedsNeeded.toLocaleString()}</strong></span>
+                                </div>
+                            </div>`;
+                    });
+
+                    rarityHTML += '</div>';
+                    heroProgressHTML += rarityHTML;
+                }
+
+                // ── Sprinkler cards for this rarity ──
+                if (sprinklers.length > 0) {
+                    let rarityHTML = `
+                        <h3 style="margin: 20px 0 10px 0; color: ${rc.light}; border-left: 3px solid ${rc.light}; padding-left: 8px;">
+                            ${rarity.toUpperCase()} SPRINKLERS
+                        </h3>
+                        <div class="maxout-progress-grid">`;
+
+                    sprinklers.forEach((sprinkler, index) => {
+                        const isMaxLevel   = sprinkler.level >= sprinklerConfig.maxLevel;
+                        const cardsNeeded  = isMaxLevel ? 0 : getSprinklerCardsNeeded(rarity, sprinkler.level);
+                        const toolsNeeded  = getSprinklerToolsNeeded(rarity, sprinkler.level);
+                        const cardCostNext = sprinklerConfig.cardCost[rarity][sprinkler.level - 1] || 0;
+
+                        const cardNextPct  = isMaxLevel ? 100 : (cardCostNext > 0 ? Math.min(100, sprinkler.cards / cardCostNext * 100) : 100);
+                        const levelPct     = (sprinkler.level / sprinklerConfig.maxLevel * 100);
+                        const toolCovered  = Math.min(availableTools, toolsNeeded);
+                        const toolPct      = toolsNeeded > 0 ? Math.min(100, toolCovered / toolsNeeded * 100) : 100;
+
+                        totalSprinklerProgress.current    += sprinkler.level;
+                        totalSprinklerProgress.max        += sprinklerConfig.maxLevel;
+                        totalSprinklerProgress.cardsNeeded += cardsNeeded;
+                        totalSprinklerProgress.toolsNeeded += toolsNeeded;
+
+                        rarityHTML += `
+                            <div class="hero-item ${rarity}" style="border-left: 3px solid ${rc.light};">
+                                <div class="hero-header">
+                                    <span class="hero-name" style="color:${rc.light};">${rarity.toUpperCase()} Sprinkler #${index + 1}</span>
+                                    <span class="hero-level ${isMaxLevel ? 'maxed' : ''}" style="${isMaxLevel ? 'color:#fbbf24;font-weight:700;' : ''}">
+                                        ${isMaxLevel ? '★ MAX' : `Lv ${sprinkler.level} / ${sprinklerConfig.maxLevel}`}
+                                    </span>
+                                </div>
+
+                                <div class="progress-label">Level Progress</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width:${levelPct}%; background:linear-gradient(90deg,${rc.dark},${rc.light});">
+                                        ${levelPct.toFixed(0)}%
+                                    </div>
+                                </div>
+
+                                ${!isMaxLevel ? `
+                                <div class="progress-label" style="margin-top:6px;">Cards → Next Level (${sprinkler.cards}/${cardCostNext})</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width:${cardNextPct.toFixed(1)}%; background:linear-gradient(90deg,${rc.dark},${rc.light}); opacity:0.7;">
+                                        ${cardNextPct.toFixed(0)}%
+                                    </div>
+                                </div>
+                                ` : ''}
+
+                                <div class="progress-label" style="margin-top:6px;">Tools to Max (${availableTools.toLocaleString()} / ${(availableTools + toolsNeeded).toLocaleString()})</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" style="width:${toolPct.toFixed(1)}%; background:linear-gradient(90deg,#0891b2,#06b6d4); opacity:0.85;">
+                                        ${toolPct.toFixed(0)}%
+                                    </div>
+                                </div>
+
+                                <div class="progress-detail" style="margin-top:6px; display:flex; gap:12px; flex-wrap:wrap;">
+                                    ${!isMaxLevel ? `<span>🃏 Cards to max: <strong>${cardsNeeded.toLocaleString()}</strong></span>` : '<span style="color:#fbbf24;">🃏 Cards: DONE</span>'}
+                                    <span>🔧 Tools to max: <strong>${toolsNeeded.toLocaleString()}</strong></span>
+                                </div>
+                            </div>`;
+                    });
+
+                    rarityHTML += '</div>';
+                    sprinklerProgressHTML += rarityHTML;
+                }
+            });
+
+            // ── Overall summary ──
+            const heroLevelPct       = totalHeroProgress.max > 0 ? (totalHeroProgress.current / totalHeroProgress.max * 100) : 0;
+            const sprinklerLevelPct  = totalSprinklerProgress.max > 0 ? (totalSprinklerProgress.current / totalSprinklerProgress.max * 100) : 0;
+            const seedPctTotal       = totalHeroProgress.seedsNeeded > 0 ? Math.min(100, availableSeeds / (availableSeeds + totalHeroProgress.seedsNeeded) * 100) : 100;
+            const toolPctTotal       = totalSprinklerProgress.toolsNeeded > 0 ? Math.min(100, availableTools / (availableTools + totalSprinklerProgress.toolsNeeded) * 100) : 100;
+
+            return `
+                <div class="maxout-container">
+                    <div class="maxout-header">MAX OUT — Progress Tracking</div>
+
+                    ${heroProgressHTML}
+                    ${sprinklerProgressHTML}
+
+                    <h3 style="margin: 28px 0 12px 0; font-size:13px; text-transform:uppercase; letter-spacing:1px; color: var(--text-secondary);">
+                        ━━ ALL HEROES SUMMARY ━━
+                    </h3>
+                    <div class="maxout-progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-title">Heroes — Level Progress</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width:${heroLevelPct.toFixed(1)}%; background:linear-gradient(90deg,#7c3aed,#8b5cf6);">
+                                    ${heroLevelPct.toFixed(1)}%
+                                </div>
+                            </div>
+                            <div class="progress-info">
+                                <span>Levels: ${totalHeroProgress.current} / ${totalHeroProgress.max}</span>
+                            </div>
+                            <div class="progress-detail">🃏 Cards still needed: ${totalHeroProgress.cardsNeeded.toLocaleString()}</div>
+                        </div>
+                        <div class="progress-card seed-token">
+                            <div class="progress-title">Heroes — Seeds Progress</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width:${seedPctTotal.toFixed(1)}%; background:linear-gradient(90deg,#7c3aed,#8b5cf6);">
+                                    ${seedPctTotal.toFixed(1)}%
+                                </div>
+                            </div>
+                            <div class="progress-info">
+                                <span>Have: ${availableSeeds.toLocaleString()}</span>
+                                <span>Still need: ${totalHeroProgress.seedsNeeded.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 20px 0 12px 0; font-size:13px; text-transform:uppercase; letter-spacing:1px; color: var(--text-secondary);">
+                        ━━ ALL SPRINKLERS SUMMARY ━━
+                    </h3>
+                    <div class="maxout-progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-title">Sprinklers — Level Progress</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width:${sprinklerLevelPct.toFixed(1)}%; background:linear-gradient(90deg,#0891b2,#06b6d4);">
+                                    ${sprinklerLevelPct.toFixed(1)}%
+                                </div>
+                            </div>
+                            <div class="progress-info">
+                                <span>Levels: ${totalSprinklerProgress.current} / ${totalSprinklerProgress.max}</span>
+                            </div>
+                            <div class="progress-detail">🃏 Cards still needed: ${totalSprinklerProgress.cardsNeeded.toLocaleString()}</div>
+                        </div>
+                        <div class="progress-card tool-token">
+                            <div class="progress-title">Sprinklers — Tools Progress</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" style="width:${toolPctTotal.toFixed(1)}%; background:linear-gradient(90deg,#0891b2,#06b6d4);">
+                                    ${toolPctTotal.toFixed(1)}%
+                                </div>
+                            </div>
+                            <div class="progress-info">
+                                <span>Have: ${availableTools.toLocaleString()}</span>
+                                <span>Still need: ${totalSprinklerProgress.toolsNeeded.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSortedPacksByOrder() {
+            return selectedPacks.sort((a, b) => {
+                return PACK_ORDER.indexOf(a) - PACK_ORDER.indexOf(b);
+            });
+        }
+
+        function createBar(label, value, rarity, maxValue) {
+            if (maxValue === 0) maxValue = 1;
+            const heightPx = value > 0 ? (value / maxValue) * 120 : 0;
+            return `
+                <div class="bar">
+                    <div class="bar-fill ${rarity}-bar" style="height: ${heightPx}px;">
+                        <div class="bar-value">${value}</div>
+                    </div>
+                    <div class="bar-label ${rarity}">${label}</div>
+                </div>
+            `;
+        }
+
+        function createDualBar(label, unlocked, total, rarity) {
+            const maxHeight = 120;
+            const unlockedHeight = total > 0 ? (unlocked / total) * maxHeight : 0;
+            const remaining = total - unlocked;
+            const remainingHeight = total > 0 ? (remaining / total) * maxHeight : 0;
+
+            const colors = RARITY_COLORS[rarity];
+
+            return `
+                <div class="dual-bar">
+                    <div class="dual-bar-container">
+                        <div class="dual-bar-column" style="height: ${unlockedHeight}px; background: linear-gradient(to top, ${colors.dark}, ${colors.light});">
+                            <div class="dual-bar-value">${unlocked}</div>
+                        </div>
+                        <div class="dual-bar-column" style="height: ${remainingHeight}px; background: var(--bg-tertiary); border: 1px solid var(--border);">
+                            <div class="dual-bar-value" style="color: var(--text-dim);">${remaining}</div>
+                        </div>
+                    </div>
+                    <div class="bar-label ${rarity}">${label}</div>
+                </div>
+            `;
+        }
+
+        function createPackDetailCard(packName) {
+            const pack = packData[packName];
+            return `
+                <div class="pack-card">
+                    <div class="pack-header ${pack.rarity}">${packName}</div>
+                    
+                    <div class="pack-section tokens-section">
+                        <div class="pack-section-title">Tokens</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Type</th><th>Min</th><th>Max</th><th>%</th><th>Var</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Seed Token</td><td><input type="number" value="${pack.seedToken.min}" onchange="updatePackData('${packName}', 'seedToken', 'min', this.value)"></td><td><input type="number" value="${pack.seedToken.max}" onchange="updatePackData('${packName}', 'seedToken', 'max', this.value)"></td><td>100</td><td>-</td></tr>
+                                <tr><td>Tool Token</td><td><input type="number" value="${pack.toolToken.min}" onchange="updatePackData('${packName}', 'toolToken', 'min', this.value)"></td><td><input type="number" value="${pack.toolToken.max}" onchange="updatePackData('${packName}', 'toolToken', 'max', this.value)"></td><td>100</td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-section common-section">
+                        <div class="pack-section-title">Common Items</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Type</th><th>Min</th><th>Max</th><th>%</th><th>Var</th></tr>
+                            </thead>
+                            <tbody>
+                                ${createEditableTableRow(packName, 'Hero Card', pack.commonHeroCard)}
+                                ${createEditableTableRow(packName, 'Hero Unlock', pack.commonHeroUnlock)}
+                                ${createEditableTableRow(packName, 'Sprinkler Card', pack.commonSprinklerCard)}
+                                ${createEditableTableRow(packName, 'Sprinkler Unlock', pack.commonSprinklerUnlock)}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-section uncommon-section">
+                        <div class="pack-section-title">Uncommon Items</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Type</th><th>Min</th><th>Max</th><th>%</th><th>Var</th></tr>
+                            </thead>
+                            <tbody>
+                                ${createEditableTableRow(packName, 'Hero Card', pack.uncommonHeroCard)}
+                                ${createEditableTableRow(packName, 'Hero Unlock', pack.uncommonHeroUnlock)}
+                                ${createEditableTableRow(packName, 'Sprinkler Card', pack.uncommonSprinklerCard)}
+                                ${createEditableTableRow(packName, 'Sprinkler Unlock', pack.uncommonSprinklerUnlock)}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-section rare-section">
+                        <div class="pack-section-title">Rare Items</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Type</th><th>Min</th><th>Max</th><th>%</th><th>Var</th></tr>
+                            </thead>
+                            <tbody>
+                                ${createEditableTableRow(packName, 'Hero Card', pack.rareHeroCard)}
+                                ${createEditableTableRow(packName, 'Hero Unlock', pack.rareHeroUnlock)}
+                                ${createEditableTableRow(packName, 'Sprinkler Card', pack.rareSprinklerCard)}
+                                ${createEditableTableRow(packName, 'Sprinkler Unlock', pack.rareSprinklerUnlock)}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-section epic-section">
+                        <div class="pack-section-title">Epic Items</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Type</th><th>Min</th><th>Max</th><th>%</th><th>Var</th></tr>
+                            </thead>
+                            <tbody>
+                                ${createEditableTableRow(packName, 'Hero Card', pack.epicHeroCard)}
+                                ${createEditableTableRow(packName, 'Hero Unlock', pack.epicHeroUnlock)}
+                                ${createEditableTableRow(packName, 'Sprinkler Card', pack.epicSprinklerCard)}
+                                ${createEditableTableRow(packName, 'Sprinkler Unlock', pack.epicSprinklerUnlock)}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pack-section legendary-section">
+                        <div class="pack-section-title">Legendary Items</div>
+                        <table class="editable-table">
+                            <thead>
+                                <tr><th>Type</th><th>Min</th><th>Max</th><th>%</th><th>Var</th></tr>
+                            </thead>
+                            <tbody>
+                                ${createEditableTableRow(packName, 'Hero Card', pack.legendaryHeroCard, true)}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createEditableTableRow(packName, label, data, isLegendary = false) {
+            const fieldName = label.replace(/ /g, '_').toLowerCase();
+            return `
+                <tr>
+                    <td>${label}</td>
+                    <td><input type="number" value="${data.min}" onchange="updatePackDataComplex('${packName}', '${fieldName}', 'min', this.value)"></td>
+                    <td><input type="number" value="${data.max}" onchange="updatePackDataComplex('${packName}', '${fieldName}', 'max', this.value)"></td>
+                    <td><input type="number" value="${data.chance}" onchange="updatePackDataComplex('${packName}', '${fieldName}', 'chance', this.value)"></td>
+                    <td>${isLegendary ? '-' : `<input type="number" value="${data.variety}" onchange="updatePackDataComplex('${packName}', '${fieldName}', 'variety', this.value)">`}</td>
+                </tr>
+            `;
+        }
+
+        function updatePackData(packName, field, subfield, value) {
+            packData[packName][field][subfield] = parseFloat(value);
+        }
+
+        function updatePackDataComplex(packName, fieldLabel, property, value) {
+            const rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+            let targetField = null;
+            
+            for (const rarity of rarities) {
+                const testField = rarity + fieldLabel.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+                if (packData[packName][testField] !== undefined) {
+                    targetField = testField;
+                    break;
+                }
+            }
+
+            if (targetField && packData[packName][targetField]) {
+                packData[packName][targetField][property] = parseFloat(value);
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.pack-selector')) {
+                document.querySelectorAll('.pack-dropdown').forEach(d => d.classList.remove('active'));
+            }
+        });
+
+        window.onload = () => {
+            loadTheme();
+            loadConfigurations();
+            initializePackButtons();
+            initializeConfigTables();
+            renderComparisonSelectors();
+        };
+    </script>
+</body>
+</html>
